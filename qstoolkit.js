@@ -144,13 +144,13 @@ KeyboardEvent.prototype.getKey = function(force) {
 const qs = {
   eNd: 'Not a valid qelement or Node',
   eNdOrTag: 'Not a valid tagname, qelement, or Node',
-  eNdOrList: 'Not a valid qelement, Node, array of qelements, or HTMLCollection',
+  eNdOrList: 'Not a valid qelement, Node, qelist, HTMLCollection, or NodeList',
   eEm: 'Not a valid qelement or HTMLElement',
   eEmOrTag: 'Not a valid tagname, qelement, or HTMLElement',
   eFunc: 'Not a valid function',
   eNum: 'Not a valid number',
   eSelOrEm: 'Not a valid CSS Selector or HTMLElement',
-  eList: 'Not a valid HTMLCollection',
+  eList: 'Not a valid qelist, HTMLCollection, or NodeList',
   eIn: 'Not a valid HTMLInputElement',
   eSe: 'Not a valid HTMLSelectElement',
   eNEA: 'Not enough arguments',
@@ -489,13 +489,8 @@ var qc = (function() {
     //Querying
     var results = document.querySelectorAll(selector);
     if(results.length == 0) return null;
-    else if(results.length == 1) return tocache(new qelement(results[0]), selector, extraTime, searchIn);
-
-    var out = [];
-    for(var i=0; i<results.length; i++) {
-      out.push(new qelement(results[i]));
-    }
-    return tocache(out, selector, extraTime, searchIn);
+    if(results.length == 1) return tocache(new qelement(results[0]), selector, extraTime, searchIn);
+    return tocache(new qelist(results), selector, extraTime, searchIn);
   }
   qc.extend({
     cClear: function() {
@@ -532,13 +527,8 @@ var q = (function() {
     //Querying
     var results = searchIn.em.querySelectorAll(selector);
     if(results.length == 0) return null;
-    else if(results.length == 1) return new qelement(results[0]);
-
-    var out = [];
-    for(var i=0; i<results.length; i++) {
-      out.push(new qelement(results[i]));
-    }
-    return out;
+    if(results.length == 1) return new qelement(results[0]);
+    return new qelist(results);
   }
   function css(a, y) {
     if(!q.is(a)) return '';
@@ -714,6 +704,10 @@ var q = (function() {
 function newq(element) {
   return new qelement(element);
 }
+function makeq(element) {
+  if(element instanceof qelement) return element;
+  return new qelement(element);
+}
 var qelement = (function() {
   function qelement(element) {
     if(typeof(element) == qs.ts) this.em = document.createElement(element);
@@ -728,11 +722,11 @@ var qelement = (function() {
   }
   qelement.extend({
     fromNodes: function(nodelist) {
-      if(nodelist instanceof HTMLElement) return new qelement(nodelist);
-      if(!(nodelist instanceof HTMLCollection)) throw new TypeError(qs.eList);
+      if(nodelist instanceof HTMLElement) return makeq(nodelist);
+      if(!(nodelist instanceof HTMLCollection || nodelist instanceof NodeList || nodelist instanceof qelist)) throw new TypeError(qs.eList);
       var out = [];
       for(var i=0; i<nodelist.length; i++) {
-        out.push(new qelement(nodelist[i]));
+        out.push(makeq(nodelist[i]));
       }
       return out;
     },
@@ -858,17 +852,17 @@ var qelement = (function() {
       var o;
       if(!qelement.isstr(child)) throw new TypeError(qs.eNd);
       this.em.appendChild(child = (child instanceof qelement ? child.em : (typeof(child) == qs.ts ? (o = document.createElement(child)) : child)));
-      if(o) return new qelement(child);
+      if(o) return makeq(child);
       return this;
     },
     insertAt: function(child, index) {
       this.insertBefore(child = (child instanceof qelement ? child.em : (typeof(child) == qs.ts ? document.createElement(child) : child)), this.children(index));
-      return new qelement(child);
+      return makeq(child);
     },
     insertBefore: function(child, before) {
       if(!(qelement.isstr(child) || qelement.is(before))) throw new TypeError(qs.eNd);
       this.em.insertBefore(child = (child instanceof qelement ? child.em : (typeof(child) == qs.ts ? document.createElement(child) : child)), before instanceof qelement ? before.em : before);
-      return new qelement(child);
+      return makeq(child);
     },
     detach: function() {
       this.em.parentNode.removeChild(this.em);
@@ -877,23 +871,23 @@ var qelement = (function() {
     appendTo: function(parent) {
       if(!qelement.isstr(parent)) throw new TypeError(qs.eNd);
       (parent = (parent instanceof qelement ? parent.em : (typeof(parent) == qs.ts ? document.createElement(parent) : parent))).appendChild(this.em);
-      return new qelement(parent);
+      return makeq(parent);
     },
     insertInto: function(parent, index) {
       if(!qelement.isstr(parent)) throw new TypeError(qs.eNd);
       (parent = (parent instanceof qelement ? (typeof(parent) == qs.ts ? document.createElement(parent) : parent) : new qelement(parent))).insertAt(this, index);
-      return new qelement(parent);
+      return makeq(parent);
     },
     insertBeforeIn: function(parent, before) {
       if(!(qelement.isstr(parent) || qelement.is(before))) throw new TypeError(qs.eNd);
       (parent = (parent instanceof qelement ? parent.em : (typeof(parent) == qs.ts ? document.createElement(parent) : parent))).insertBefore(this, before instanceof qelement ? before.em : before);
-      return new qelement(parent);
+      return makeq(parent);
     },
     insertBeforeThis: function(element) {
       this.parent().insertBefore(element, this);
     },
     insertAfterthis: function(element) {
-      if(this.index() == this.parent().children().length - 1) this.parent().append(new qelement(element));
+      if(this.index() == this.parent().children().length - 1) this.parent().append(makeq(element));
       else this.nextSibling().insertBeforeThis(element);
     },
     previousSibling: function() {
@@ -1029,6 +1023,42 @@ var qelement = (function() {
   //TODO: add style creator;
 
   return qelement;
+})();
+
+var qelist = (function() {
+  function qelist(ref) {
+    if(!(ref instanceof Array || ref instanceof HTMLCollection || ref instanceof NodeList)) throw new TypeError(qs.qeList);
+    var n = 0;
+    for(var i=0; i<ref.length; i++) {
+      try {
+        this[n++] = makeq(ref)
+      } catch(e) {}
+    }
+  }
+  qelist.prototype = Object.create(Array.prototype);
+  for(var m in qelement.prototype) {
+    if(qelement.prototype.hasOwnProperty(m)) {
+      (function(m) {
+        qelist.prototype[m] = function() {
+          var out = [], tmp, returnThis = true, i=0;
+          // Check if 'this' needs to be returned
+          if(0 in this) {
+            tmp = qelement.prototype[m].apply(this[i], arguments);
+            if(tmp !== this[i]) returnThis = false;
+            else out[0] = tmp;
+          }
+          // Run on rest of contained elements
+          for(i=1; i<this.length; i++) {
+            tmp = qelement.prototype[m].apply(this[i], arguments);
+            if(!returnThis) out[i] = tmp;
+          }
+          if(returnThis) return this;
+          return out;
+        }
+      })(m);
+    }
+  }
+  return qelist
 })();
 
 //TODO: Finish qnet
