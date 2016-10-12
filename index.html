@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Physics - MVHS Independent Study</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/9b05dd50cb.css">
+    <link href="https://fonts.googleapis.com/css?family=Merriweather" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Lato:400,300,400italic,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.6.0/katex.min.js"></script>
+    <script src="newqstoolkit.js"></script>
+    <script src="script.js"></script>
+    <script src="animations.js"></script>
+  </head>
+  <body>
+    <div id="sidebar">
+      <h1 class="u">Physics</h1>
+      <div id="sidelistindex" class="u">
+        <div class="sidescroll-container">
+          <div class="active">Table of Contents</div>
+          <div>Tables</div>
+          <div>Examples</div>
+        </div>
+      </div>
+      <div id="sidelist">
+        <div class="sidescroll-container">
+          <div id="toc">
+            <ul></ul>
+          </div>
+          <div id="tbl">
+            <ul></ul>
+          </div>
+          <div id="exs">
+            <ul></ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="content">
+      <div class="scroll-container">
+        <div class="unit-header-anchor"></div>
+        <div class="unit-header-container u">
+          <h1 class="unit-header">About</h1>
+        </div>
+        <div class="unit-container">
+          <div class="topic-header">
+            <h2>About This Project</h2>
+            <p>
+              This project is my high school independent study for Physics.
+              To complete my goal of graduating an entire year early, with Honors and LISA diplomas, I needed to do extra classes outside of school.
+              I have done a couple other independent studies in the form of websites (see my <a href="https://github.com/dqsully/">github profile</a>), but this one is my best so far. (I've had a lot more experience now)
+            </p>
+            <p>
+              I have taken the entire class and split it up as is on the syllabus, so it is split into Units, which are then split into Topics.
+              I will cover everything you need to know about Physics in each Topic, but I will not be showing any shortcuts.
+              I may or may not have coded the website with said shortcuts, but I emplore you to figure them out on your own.
+              I do this because I don't want to be blamed for teaching anything incorrectly, and because I don't know what works best for you; only you can figure that out.
+              So please, play around with the formulas and whatnot down there, don't just read this as any boring old reference book.
+            </p>
+          </div>
+          <div class="topic-header">
+            <h2>What I Used</h2>
+            <p>
+              <b>Note: if you don't care about how I programmed this, please skip this part.</b>
+              To actually create this website, I have used a couple fonts from Google Fonts (Merriweather for physical units and the like, and Lato for the rest of the site), KaTeX which is a library to display math (project from Khan Academy), FontAwesome icons, and, in my toolkit, I include a Promises polyfil.
+              All of the other code I have written myself, including <a href="https://github.com/dqsully/q-s-JS-toolkit">Q's Toolkit</a>, an exploration by myself to create a library that would make programming websites easier.
+              It is inspired by jQuery, but focusing on speed and universality instead. (jQuery is simplified and therefore specialized, my toolkit, although not as widely supported by browsers, allows the programmer much more control.)
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-container">
+        <div class="unit-header-anchor"></div>
+        <div class="unit-header-container u">
+          <h1 class="unit-header">Math/Motion</h1>
+        </div>
+        <div class="unit-container">
+          <div class="topic-header">
+            <h2>Metric to Metric Conversions</h2>
+            <p>
+              The <b>Metric System</b> is a measurement system in base 10.
+              This means that every unit of a certain measurement is some factor of 10 in ratio to another of the same measurement.
+              Shown below is a quick table of common metric conversions (replace "meter" with whatever unit you like), which both serves as the definition for metric units and the conversion to the base unit (in this case, meters).
+              When converting between any units, the generally accepted way is to use a fraction defined by the ratio between the unit you'd like to get and the unit you have.
+              The calculator further below shows this very nicely.
+              I will not show any shortcuts, as I have mentioned before, but I will mention that one exists using one of the laws of exponents. (You can find it on my <a href="http://dqsully.github.io/HSTrigonometry/default.html">Trigonometry Website</a> [It really sucks compared to this site, doesn't it?]).
+            </p>
+            <div>
+              <h3>Common Metric Conversions</h3>
+              <info>
+                implements: table;
+              </info>
+              <table>
+                <tr>
+                  <th>Unit</th>
+                  <th><m>`=`</m></th>
+                  <th colspan="3">in Meters</th>
+                </tr>
+                <tr>
+                  <td>
+                    <m>`1` kilometer</m>
+                  </td>
+                  <td>
+                    <m>`=`</m>
+                  </td>
+                  <td>
+                    <m>`10^{3}`</m>
+                  </td>
+                  <td>
+                    <m>or</m>
+                  </td>
+                  <td>
+                    <m>`1000` meters</m>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <m>`1` hectameter</m>
+                  </td>
+                  <td>
+                    <m>`=`</m>
+                  </td>
+                  <td>
+                    <m>`10^{2}`</m>
+                  </td>
+                  <td>
+                    <m>or</m>
+                  </td>
+                  <td>
+                    <m>`100` meters</m>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <m>`1` decameter</m>
+                  </td>
+                  <td>
+                    <m>`=`</m>
+                  </td>
+                  <td>
+                    <m>`10^{1}`</m>
+                  </td>
+                  <td>
+                    <m>or</m>
+                  </td>
+                  <td>
+                    <m>`10` meters</m>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <m>`1` meter</m>
+                  </td>
+                  <td>
+                    <m>`=`</m>
+                  </td>
+                  <td>
+                    <m>`10^{0}`</m>
+                  </td>
+                  <td>
+                    <m>or</m>
+                  </td>
+                  <td>
+                    <m>`1` meter</m>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <m>`1` decimeter</m>
+                  </td>
+                  <td>
+                    <m>`=`</m>
+                  </td>
+                  <td>
+                    <m>`10^{-1}`</m>
+                  </td>
+                  <td>
+                    <m>or</m>
+                  </td>
+                  <td>
+                    <m>`0.1` meters</m>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <m>`1` centimeter</m>
+                  </td>
+                  <td>
+                    <m>`=`</m>
+                  </td>
+                  <td>
+                    <m>`10^{-2}`</m>
+                  </td>
+                  <td>
+                    <m>or</m>
+                  </td>
+                  <td>
+                    <m>`0.01` meters</m>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <m>`1` millimeter</m>
+                  </td>
+                  <td>
+                    <m>`=`</m>
+                  </td>
+                  <td>
+                    <m>`10^{-3}`</m>
+                  </td>
+                  <td>
+                    <m>or</m>
+                  </td>
+                  <td>
+                    <m>`0.001` meters</m>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <div>
+              <h3>Metric Conversion Calculator</h3>
+              <info>
+                implements: example;
+              </info>
+              <div class="flex center mgnc-5 mcc inputs" style="height: 39px">
+                <input type="number" value="0" class="number">
+                <select class="prefix">
+                  <option value="24">yotta</option>
+                  <option value="21">zetta</option>
+                  <option value="18">exa</option>
+                  <option value="15">peta</option>
+                  <option value="12">tera</option>
+                  <option value="9">giga</option>
+                  <option value="6">mega</option>
+                  <option value="3">kilo</option>
+                  <option value="2">hecto</option>
+                  <option value="1">deka</option>
+                  <option value="0" selected>(base unit)</option>
+                  <option value="-1">deci</option>
+                  <option value="-2">centi</option>
+                  <option value="-3">milli</option>
+                  <option value="-6">micro</option>
+                  <option value="-9">nano</option>
+                  <option value="-12">pico</option>
+                  <option value="-15">femto</option>
+                  <option value="-18">atto</option>
+                  <option value="-21">zepto</option>
+                  <option value="-24">yocto</option>
+                </select>
+                <input type="text" class="unit" value="meters" placeholder="base unit to display">
+              </div>
+              <div class="flex center mcc totext" style="height: 26px">
+                <span class="nogrow auto txtmgn">- to -</span>
+              </div>
+              <div class="flex center mgnc-5 mcc outputs" style="height: 39px">
+                <input class="number out" value="0" disabled>
+                <select class="prefix">
+                  <option value="24">yotta</option>
+                  <option value="21">zetta</option>
+                  <option value="18">exa</option>
+                  <option value="15">peta</option>
+                  <option value="12">tera</option>
+                  <option value="9">giga</option>
+                  <option value="6">mega</option>
+                  <option value="3">kilo</option>
+                  <option value="2">hecto</option>
+                  <option value="1">deka</option>
+                  <option value="0" selected>(base unit)</option>
+                  <option value="-1">deci</option>
+                  <option value="-2">centi</option>
+                  <option value="-3">milli</option>
+                  <option value="-6">micro</option>
+                  <option value="-9">nano</option>
+                  <option value="-12">pico</option>
+                  <option value="-15">femto</option>
+                  <option value="-18">atto</option>
+                  <option value="-21">zepto</option>
+                  <option value="-24">yocto</option>
+                </select>
+                <input class="unit out" value="meters" disabled>
+              </div>
+              <div class="flex center mcc explanation" style="height: 65px">
+                <div class="nogrow auto txtmgn"></div>
+              </div>
+            </div>
+          </div>
+          <div class="topic-header">
+            <h2>English to Metric and Metric to English Conversions</h2>
+          </div>
+          <div class="topic-header">
+            <h2>Estimation</h2>
+          </div>
+          <div class="topic-header">
+            <h2>Significant Figures, Scientific Notation, and Uncertainty</h2>
+          </div>
+          <div class="topic-header">
+            <h2>Factor Labeling</h2>
+          </div>
+          <div class="topic-header">
+            <h2>Graph Literacy</h2>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-container">
+        <div class="unit-header-anchor"></div>
+        <div class="unit-header-container u">
+          <h1 class="unit-header">Motion</h1>
+        </div>
+        <div class="unit-container">
+          <div class="topic-header">
+            <h2>Speed, Velocity, and Acceleration</h2>
+          </div>
+          <div class="topic-header">
+            <h2>Position - Time Graphs</h2>
+          </div>
+          <div class="topic-header">
+            <h2>Velocity - Time Graphs</h2>
+          </div>
+          <div class="topic-header">
+            <h2>Acceleration - Time Graphs</h2>
+          </div>
+          <div class="topic-header">
+            <h2>Kinematic Equations</h2>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-container">
+        <div class="unit-header-anchor"></div>
+        <div class="unit-header-container u">
+          <h1 class="unit-header">Vectors and Projectile Motion</h1>
+        </div>
+        <div class="unit-container">
+          <div class="topic-header">
+            <h2>Vectors in One Dimension</h2>
+          </div>
+          <div class="topic-header">
+            <h2>Vectors in Two Dimensions</h2>
+          </div>
+          <div class="topic-header">
+            <h2>Projectile Motion</h2>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-container">
+        <div class="unit-header-anchor"></div>
+        <div class="unit-header-container u">
+          <h1 class="unit-header">Forces</h1>
+        </div>
+        <div class="unit-container">
+          <div class="topic-header">
+            <h2>Newton's 3 Laws</h2>
+          </div>
+          <div class="topic-header">
+            <h2>Friction</h2>
+          </div>
+          <div class="topic-header">
+            <h2>Inclined Plane Problems</h2>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-container">
+        <div class="unit-header-anchor"></div>
+        <div class="unit-header-container u">
+          <h1 class="unit-header">Momentum and Impulse</h1>
+        </div>
+        <div class="unit-container">
+          <div class="topic-header">
+            <h2>Momentum</h2>
+          </div>
+          <div class="topic-header">
+            <h2>Impulse</h2>
+          </div>
+          <div class="topic-header">
+            <h2>Conservation of Momentum</h2>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-container">
+        <div class="unit-header-anchor"></div>
+        <div class="unit-header-container u">
+          <h1 class="unit-header">Work, Power, and Energy</h1>
+        </div>
+        <div class="unit-container">
+          <div class="topic-header">
+            <h2>Work</h2>
+          </div>
+          <div class="topic-header">
+            <h2>Power</h2>
+          </div>
+          <div class="topic-header">
+            <h2>Energy</h2>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-container">
+        <div class="unit-header-anchor"></div>
+        <div class="unit-header-container u">
+          <h1 class="unit-header">Nuclear Physics</h1>
+        </div>
+        <div class="unit-container">
+          <div class="topic-header">
+            <h2>Model of the Atom and Radioactivity</h2>
+          </div>
+          <div class="topic-header">
+            <h2>Nuclear Energy</h2>
+          </div>
+          <div class="topic-header">
+            <h2>Uses and Doses of Radioactive Material</h2>
+          </div>
+          <div class="topic-header">
+            <h2>Historical Significance of Radiation</h2>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-container">
+        <div class="unit-header-anchor"></div>
+        <div class="unit-header-container u">
+          <h1 class="unit-header">Static Electricity</h1>
+        </div>
+        <div class="unit-container">
+          <div class="topic-header">
+            <h2>Static Electricity</h2>
+          </div>
+          <div class="topic-header">
+            <h2>Charges</h2>
+          </div>
+          <div class="topic-header">
+            <h2>Charge by Induction</h2>
+          </div>
+          <div class="topic-header">
+            <h2>Charge by Conduction</h2>
+          </div>
+          <div class="topic-header">
+            <h2>Coulomb's Law</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,5 +1,5 @@
 /*
-  Q's JavaScript Toolkit v0.3
+  Q's JavaScript Toolkit v0.4.2
   A generic alternative to jQuery, allowing some amazing chaining.
   Instructions for compressing:
     Make sure all functions have aliases
@@ -26,7 +26,7 @@ Function.prototype.clone = function() {
     }
     return temp;
 };
-Object.prototype.keys = function() {return Object.keys(this);}
+Object.prototype.getKeys = function() {return Object.keys(this);}
 Object.prototype.defineProperty = function(prop, descriptor) {return Object.defineProperty(this, prop, descriptor);}
 Object.prototype.getOwnPropertyNames = function() {return Object.getOwnPropertyNames(this);}
 Object.prototype.getOwnPropertyDescriptor = function(prop) {return Object.getOwnPropertyDescriptor(this, prop);}
@@ -39,7 +39,7 @@ Object.prototype.equals = function (to) {
   var paths = [this.path(), to.path()];
   var arrs = [];
   var tmp;
-  var keys = [paths[0].keys(), paths[1].keys()];
+  var keys = [paths[0].getKeys(), paths[1].getKeys()];
   //Length Test
   if(keys[0].length != keys[1].length) return false;
   //Key Test
@@ -49,8 +49,10 @@ Object.prototype.equals = function (to) {
   //Value Tests
   for(var i = 0; i<keys[0].length; i++) {
     //Get array from address
-    arrs = [paths[0], paths[1]];
-    for(var a=0; a<(tmp = keys[0][i].split('.')).length; a++) {
+    arrs = [this, to];
+    tmp = keys[0][i].split('.');
+    for(var a=0; a<tmp.length; a++) {
+      console.log(arrs[0]);
       arrs[0] = arrs[0][tmp[a]];
       arrs[1] = arrs[1][tmp[a]];
     }
@@ -61,45 +63,55 @@ Object.prototype.equals = function (to) {
   }
   return true;
 }
+// Get path to all values other than objects
 Object.prototype.path = function() {
-  var arrays = {};
-  var stack = [], ar, keys, rm = false, nrm = false, toadd;
-  var i, b = 0;
-  stack = [];
+  var out = {}, stack = [], prev;
+  var keys, ar, a, i, j, s, rm, badar, isbad;
   while(true) {
-    if(b > 30) break;
-    b+=1;
     ar = this;
-    nrm = false;
-    toadd = '';
-    for(var i=0; i<(rm ? stack.length - 1 : stack.length); i++) {
-      ar = ar[stack[i]];
-    }
-    keys = Object.keys(ar);
-    for(var i=(rm ? keys.indexOf(stack[stack.length - 1]) + 1 : 0); i<keys.length; i++) {
-      if(typeof(ar[keys[i]]) == qs.to) {
-        if(rm) stack.pop();
-        stack.push(keys[i]);
-        for(var a=0; a<stack.length; a++) {
-          toadd += (a == 0 ? '' : '.') + stack[a];
+    // Go to current path
+    for(i=0; i<stack.length; i++) ar = ar[stack[i]];
+
+    keys = ar.getKeys();
+
+    // Reset text path
+    s = '';
+    // Continue search
+    for(i=(rm ? keys.indexOf(prev) + 1 : 0); i<keys.length; i++) {
+      // If tree continues, follow
+      if(typeof(a = ar[keys[i]]) == qs.to) {
+        // Make sure you don't end up where you were before
+        badar = this, isbad = false;
+        if(a == badar) isbad = true;
+        for(j=0; j<stack.length-1&&isbad==false; j++)
+          if(a == (badar = badar[stack[j]])) isbad = true;
+
+        if(!isbad) {
+          stack.push(keys[i]);
+          rm = false;
+          break;
         }
-        arrays[toadd] = ar[keys[i]];
-        nrm = true;
-        break;
+      } else {
+        //Add current path to output
+        // Get text path if it doesn't yet exist
+        if(!s) for(var j=0; j<stack.length; j++) s += (j>0?'.':'') + stack[j];
+        out[s + (s.length > 0 ? '.' : '') + keys[i]] = a;
+        rm = true;
       }
     }
-    if(!nrm && rm) stack.pop();
-    if(stack.length == 0 && !nrm) break;
-    rm = !nrm;
+    // Go back a layer in the tree, reached the end
+    if(rm) {
+      if(stack.length == 0) return out;
+      prev = stack.pop();
+    }
   }
-  return arrays;
 }
 Object.prototype.extend = function(append) {
   if(typeof(append) != qs.to) throw new TypeError('Not a valid Object');
-  var keys = append.keys(), akey, cur;
+  var keys = append.getKeys(), akey, cur;
   for(var i=0; i<keys.length; i++) {
     if(typeof(cur = append[keys[i]]) == qs.to) {
-      akey = cur.keys();
+      akey = cur.getKeys();
       // Allow getters and setters
       if((akey.length == 2 && 'get' in cur && 'set' in cur) || (akey.length == 1 && ('get' in cur || 'set' in cur))) this.defineProperty(keys[i], cur);
       else this[keys[i]] = cur;
@@ -107,7 +119,7 @@ Object.prototype.extend = function(append) {
   }
 }
 Object.prototype.keyOf = function(value) {
-  var keys = this.keys(), v;
+  var keys = this.getKeys(), v;
   for(var i=0; i<keys.length; i++) {
     if((v = this[keys[i]]) == value) return keys[i];
   }
@@ -119,7 +131,7 @@ String.prototype.containsAny = function(find, begin) {
       if(this.indexOf(find[i], begin) != -1) return true;
     }
   } else if(typeof(find) == qs.to) {
-    var keys = find.keys();
+    var keys = find.getKeys();
     for(var i=0; i<keys.length; i++) {
       if(this.indexOf(find[keys[i]], begin) != -1) return true;
     }
@@ -132,8 +144,8 @@ String.prototype.containsOnly = function(find, i) {
     for(; i<this.length; i++) {
       if(find.indexOf(this[i]) != -1) return false;
     }
-  } else if(typeof(find) == qs.ts) {
-    var keys = this.keys();
+  } else if(typeof(find) == qs.to) {
+    var keys = this.getKeys();
     for(; i<this.length; i++) {
       if(find.indexOf(this[keys[i]]) != -1) return false;
     }
@@ -152,11 +164,32 @@ Object.prototype.for = function(start, end, func) {
   }
   return this;
 }
+Object.prototype.foreach = function(func) {
+  var keys = this.getKeys();
+  for(var i=0; i<keys.length; i++) {
+    func(this[keys[i]], this, keys[i]);
+  }
+  return this;
+}
+Object.prototype.applyNew = function(args) {
+  return new (Function.prototype.bind.apply(this, args));
+}
+Object.prototype.callNew = function() {
+  return new (Function.prototype.bind.apply(this, arguments));
+}
 KeyboardEvent.prototype.getKey = function(force) {
   if(!force && 'key' in this) return this.key;
   var key = qs.keys[this.which || this.keyCode];
   if(typeof(key) == qs.to) key = key[+this.shiftKey];
   return key;
+}
+Number.prototype.bound = function(lower, higher) {
+  if(lower > higher) {
+    var t = higher;
+    higher = lower;
+    lower = t;
+  }
+  return Math.min(higher, Math.max(lower, this));
 }
 window.events = [];
 window.on = function(name, func, callNow) {
@@ -260,7 +293,12 @@ const qs = {
       249: 'EraseEof',
       250: 'Play',
       251: 'ZoomOut'
-    }
+    },
+  cssTypeNumber: 0,
+  cssTypeAngle: 1,
+  cssTypeLength: 2,
+  cssTypePercentage: 3,
+  cssTypeLengthPercentage: 4
 };
 (function() {
   var i;
@@ -269,9 +307,14 @@ const qs = {
   for(i = 65; i<91; i++) qs.keys[i] = [(letter = String.fromCharCode(i)).toLowerCase(), letter];
 })();
 var qsettings = {
-  'defaultCSSUnit': 'px',
-  'cacheLength': 10, // Max Items
-  'cacheTimeout': 100, // Milliseconds
+  defaultCSSUnits: {
+    length: 'px',
+    angle: 'deg',
+  },
+  bezierAccuracy: 15, // 2^-n tolerance
+  cacheLength: 10, // Max Items
+  cacheTimeout: 100, // Milliseconds
+  cacheGCInterval: 1000, // Milliseconds
 }
 var qevent = (function() {
   /*
@@ -387,7 +430,7 @@ var qevent = (function() {
           if('attachTo' in options) (options['attachTo'].em || options['attachTo']).addEventListener(options['name'], function(e) {
             var ret = func.call(func, e, options['attachTo']);
             if(f.execute) f.execute(e, options['attachTo']);
-            if(ret == false) e.preventDefault();
+            if(ret === false) e.preventDefault();
             return ret;
           });
           f.id = handlers.length - 1;
@@ -416,7 +459,14 @@ var qevent = (function() {
           handlers[i] = null;
         }
         return this;
-      }
+      },
+      names: { get: function() {
+        var out = {};
+        for(var i=0; i<handlers.length; i++) {
+          out[handlers[i].name] = handlers[i];
+        }
+        return out;
+      } },
     });
     //Aliases
     event.extend({
@@ -439,7 +489,7 @@ var qevents = (function() {
             if(typeof(tmp[y]) == qs.ts) this.events[tmp[y]] = new qevent();
           }
         } else {
-          var keys = tmp.keys();
+          var keys = tmp.getKeys();
           for(var y=0; y<keys.length; y++) {
             if(typeof(keys[y]) == qs.ts) this.events[keys[y]] = new qevent(tmp[keys[y]]);
           }
@@ -488,25 +538,34 @@ var qc = (function() {
     return element;
   }
 
+  function cacheGC() {
+    for(var i=0; i<cache.length;) {
+      if(i >= qsettings.cacheLength || Date.now() - cache[i].time > qsettings.cacheTimeout) cache.splice(i, 1);
+      else i++;
+    }
+    setTimeout(cacheGC, qsettings.cacheGCInterval);
+  }
+  setTimeout(cacheGC, qsettings.cacheGCInterval);
+
+
   function qc(selector, extraTime, searchIn) {
     extraTime = extraTime || 0;
+    //searchIn Validation and Formatting
+    var search = ((searchIn instanceof qelement ? searchIn.em : searchIn) || document);
+    if(searchIn && !qelement.isem(searchIn)) throw new TypeError(qs.eNd);
     //Cache
-    for(var i=0; i<cache.length;) {
-      if(i < qsettings.cacheLength && Date.now() - cache[i].time <= qsettings.cacheTimeout) {
-        if(cache[i].selector == selector && (searchIn || document) == cache[i].searchIn) return cache[i].element;
-        i++;
-      } else cache.splice(i, 1);
+    for(var i=0; i<cache.length; i++) {
+      if(cache[i].selector == selector && (searchIn || document) == cache[i].searchIn) return cache[i].element;
+      // Garbage collector has moved for efficiency
     }
     //Validation and qelement creation
     if(selector instanceof HTMLElement) return tocache(newq(selector), selector, extraTime, searchIn);
     if(qlist.is(selector)) return tocache(new qlist(selector), selector, extraTime, searchIn);
     if(typeof(selector) != qs.ts) throw new TypeError(qs.eSelOrEm);
-    //searchIn Validation and Formatting
-    if(!searchIn) searchIn = newq(document);
-    if(!(searchIn instanceof qelement)) searchIn = newq(searchIn);    //getElementById shortcut
-    if(selector[0] == '#' && selector.substr(1).toLowerCase().containsOnly(qs.fId)) return tocache(newq(document.getElementById(selector.substr(1))), selector, extraTime, searchIn);
+    //getElementById shortcut
+    if(selector[0] == '#' && selector.substr(1).toLowerCase().containsOnly(qs.fId)) return tocache(newq(search.getElementById(selector.substr(1))), selector, extraTime, searchIn);
     //Querying
-    var results = document.querySelectorAll(selector);
+    var results = search.querySelectorAll(selector);
     if(results.length == 0) return null;
     if(results.length == 1) return tocache(newq(results[0]), selector, extraTime, searchIn);
     return tocache(new qlist(results), selector, extraTime, searchIn);
@@ -526,36 +585,34 @@ var qc = (function() {
   return qc;
 })();
 var q = (function() {
-  var sbarWidth;
-  function q(selector, searchIn) {
+  var sbarWidth, oref = 0;
+  function q(selector, searchIn, forceList) {
+    //searchIn Validation and Formatting
+    var search = ((searchIn instanceof qelement ? searchIn.em : searchIn) || document);
+    if(searchIn && !qelement.isem(searchIn)) throw new TypeError(qs.eNd);
     //Validation and qelement creation
     if(selector instanceof HTMLElement) return newq(selector);
     if(qlist.is(selector)) return new qlist(selector);
     if(typeof(selector) != qs.ts) throw new TypeError(qs.eSelorEm);
-    //searchIn Validation and Formatting
-    if(!searchIn || !qelement.isem(searchIn)) searchIn = newq(document);
-    else if(!(searchIn instanceof qelement)) searchIn = newq(searchIn);
     //getElementById shortcut
-    if(selector[0] == '#' && selector.substr(1).toLowerCase().containsOnly(qs.fId)) return newq(searchIn.em.getElementById(selector.substr(1)));
+    if(selector[0] == '#' && selector.substr(1).toLowerCase().containsOnly(qs.fId)) return newq(search.getElementById(selector.substr(1)));
     //Querying
-    var results = searchIn.em.querySelectorAll(selector);
+    var results = search.querySelectorAll(selector);
+    if(forceList) return new qlist(results);
     if(results.length == 0) return null;
     if(results.length == 1) return newq(results[0]);
     return new qlist(results);
   }
-  function css(a, y) {
-    if(!q.is(a)) return '';
-    return (typeof(a) == qs.tn ? a + qsettings.defaultCSSUnit : a);
-  }
-  function ncss(a) {
-    if(!q.is(a)) return '';
-    return ', ' + css(a);
-  }
-  function ang(a) {
-    if(!q.is(a)) return 'deg';
-    return a;
-  }
 
+  function bezier(t, x1, y1, x2, y2) {
+    return {
+      x: 3*t*(x1+t*(x2-2*x1+t*(1/3+x1-x2))),
+      y: 3*t*(y1+t*(y2-2*y1+t*(1/3+y1-y2)))
+    }
+  }
+  var detect;
+
+  // From ellisbben (StackOverflow)
   q.extend({
     set: function(key, value) {
       localStorage.setItem(key, value || '');
@@ -563,11 +620,63 @@ var q = (function() {
     get: function(key) {
       return localStorage.getItem(key);
     },
+    setup: function(options) {
+      var keys = options.getKeys();
+      for(var i=0; i<keys.length; i++) {
+        qsettings[keys[i]] = options[keys[i]];
+      }
+    },
     async: function() {
       setTimeout.apply(undefined, arguments);
     },
     timer: function() {
       setInterval.apply(undefined, arguments);
+    },
+    log: function() {
+      var line = q.lineNumber(1);
+      var args = Array.prototype.unshift.call(arguments, line.file + ':' + line.line + ':');
+      console.log.apply(undefined, arguments);
+      return arguments[1];
+    },
+    ref: function() {
+      return '<#Qref:' + (oref++) + '>';
+    },
+    limit: function(modifier, timeout, func) {
+      var args = null, lock = false;
+      return function newfunc() {
+        args = modifier(arguments, args);
+        if(!lock) {
+          lock = true;
+          timeout(function onframe() {
+              lock = false;
+              func.apply(undefined, args);
+              args = null;
+          });
+        }
+      }
+    },
+    lineNumber: function(stackBack) { // 0 is caller function
+      var stack, call, clean, isNative, line, col, hasName, script;
+      stackBack += 2;
+      stack = (new Error('')).stack.split('\n');
+      if(!stackBack in stack) throw new RangeError('Stack index ' + stackBack + ' exceeds stack length');
+      call = stack[stackBack];
+      clean = call.slice(call.indexOf('at ')+3, call.length);
+      isNative = clean.containsAny(['(native)']);
+      hasName = /.+ \(.+\)/.test(clean);
+      col = clean.lastIndexOf(':');
+      line = clean.lastIndexOf(':', col - 1) + 1;
+      script = clean.slice(hasName ? clean.indexOf('(') + 1 : 0, line-1); // )
+      return {
+        isNative: isNative,
+        func: clean.slice(0, clean.indexOf(' ')),
+        hasName: hasName,
+        script: script,
+        line: isNative ? '(native)' : clean.slice(line, col),
+        col: isNative ? '(native)' : clean.slice(col + 1, hasName ? clean.length - 1 : undefined),
+        raw: clean,
+        file: script.slice(script.lastIndexOf('/') + 1)
+      };
     },
     scrollbarWidth: { get: function() {
       if(sbarWidth) return sbarWidth;
@@ -584,11 +693,14 @@ var q = (function() {
     onready: new qevent({once: true}),
     onload: new qevent({once: true}),
     registerEventHandlers: function(searchIn) {
+      if(!qelement.is(searchIn)) searchIn = null;
       var ems = q('*[qclick]', searchIn);
       if(!ems) return;
-      for(var i=0; i<ems.length; i++) {
-        ems[i].on('click', window[ems[i].attr('qclick')]);
-      }
+      if(ems instanceof qelement) ems.on('click', window[ems.attr('qclick')]);
+      else
+        for(var i=0; i<ems.length; i++) {
+          ems[i].on('click', window[ems[i].attr('qclick')]);
+        }
     },
     is: function() {
       var alen = arguments.length;
@@ -616,11 +728,11 @@ var q = (function() {
             if(tmp != '') em.style(tmp[0], tmp[1]);
           }
         }
-        if(!exit) t = setTimeout(run, animations[i].time);
+        if(!exit) t = q.async(run, animations[i].time);
         i++;
         if(i >= len) i = i % len;
       }
-      t = setTimeout(run, animations[i].time);
+      t = q.async(run, animations[i].time);
       function callback() {
         clearTimeout(t);
         exit = true;
@@ -642,92 +754,361 @@ var q = (function() {
       }
       return callback;
     },
-    //CSS Functions
-    matrix: function(a, b, c, d, tx, ty) {
-      if(!q.is(a, b, c, d, tx, ty)) throw new ReferenceError(qs.eNEA);
-      return 'matrix(' + css(a) + ncss(b) + ncss(c) + ncss(d) + ncss(tx) + ncss(ty) + ')';
+    generateCSSFunction: function(options) {
+      /*Options
+        - {} options
+          - "" name
+          - [] versions
+            - {}
+              - {} testfor?
+                - ## numArguments?
+              - [] argumentTypes
+                - ##
+          */
+      var str = 'var a=arguments,o,d,s=qsettings.defaultCSSUnits,r;', func = {};
+      var i, j, len, version, keys, conds, t, args, isCheckingArgs, v;
+
+      for(i=0, len=options.versions.length; i<len; i++) {
+        v = options.versions[i];
+        isCheckingArgs = 0;
+
+        // Define default options
+        str += 'd=[';
+        for(j=0; j<v.argumentTypes.length; j++) {
+          t = v.argumentTypes[j];
+          if(typeof(t) != qs.tn || t < 0 || t > 4) throw new TypeError('Not a valid argument type');
+          str += (j > 0 ? ',' : '') + t;
+        }
+        str += '];';
+
+        // Validate for current version
+        str += 'if(';
+        conds = 0;
+        if(v.testfor) {
+
+          keys = v.testfor.getKeys();
+          for(j=0; j<keys.length; j++) {
+            switch(keys[j]) {
+              case 'numArguments':
+                // Make sure #args is correct, and if extra options are added, that they are truly options
+                isCheckingArgs = true;
+                args = Number.parseInt(v.testfor[keys[j]]); // parseInt for security reasons
+                if(args == 0) throw new Error('Not a valid request of number of arguments');
+                str += (conds > 0 ? '&&' : '') + '(a.length==' + args + '||(a.length==' + (args+1) + '&&a[a.length-1]instanceof Array))';
+                break;
+            }
+          }
+
+        } else str += 'true';
+
+        // Define options variable if it exists
+        str += '){' + (args ? 'if(a.length==' + (args+1) + ')o=a[' + args + '];' : '');
+
+        // Modify arguments to specified units
+        /*
+        for(var i=0; i<a.length; i++) {
+          if(o && i in o) {
+            r = o;
+            if(o[i] == 5) o[i] = d[i];
+          } else if(typeof(a[i]) == qs.tn) {
+            r = d;
+          } else r=0;
+          if(r) a[i] = a[i] + (r[i] == 1 ? s.angle : (r[i] == 2 || r[i] == 4 ? s.length : (r[i] == 3 ? "%" : "")));
+        }
+        */
+        str += 'for(var i=0;i<a.length;i++){if(o&&i in o){r=o;if(o[i]==5)o[i]=d[i];}else if(typeof(a[i])==qs.tn)r=d;else r=0;if(r)a[i]=a[i]+(r[i]==1?s.angle:(r[i]==2||r[i]==4?s.length:(r[i]==3?"%":"")));}';
+
+        str += 'return "' + options.name + '("';
+        for(j=0; j<args; j++) str+='+' + (j>0?'","+':'') + 'a['+j+']';
+        str += '+")";}';
+      }
+      str += 'else throw new Error(qs.eNEA);';
+
+      func[options.name] = new Function(str);
+      q.extend(func);
     },
-    matrix3d: function(a1, b1, c1, d1, a2, b2, c2, d2, a3, b3, c3, d3, a4, b4, c4, d4) {
-      if(!q.is(a1, b1, c1, d1, a2, b2, c2, d2, a3, b3, c3, d3, a4, b4, c4, d4)) throw new ReferenceError(qs.eNEA);
-      return 'matrix3d(' + css(a1) + ncss(b1) + ncss(c1) + ncss(d1) + ncss(a2) + ncss(b2) + ncss(c2) + ncss(d2) + ncss(a3) + ncss(b3) + ncss(c3) + ncss(d3) + ncss(a4) + ncss(b4) + ncss(c4) + ncss(d4) + ')';
+    CSSTimingFunctions: {
+      'ease':       [0.25, 0.1,  0.25, 1   ],
+      'linear':     [0,    0,    1,    1   ],
+      'ease-in':    [0.42, 0,    1,    1   ],
+      'ease-out':   [0,    0,    0.58, 1   ],
+      'ease-in-out':[0.42, 0,    0.58, 1   ],
     },
-    perspective: function(l) {
-      if(!q.is(l)) throw new ReferenceError(qs.eNEA);
-      return 'perspective(' + l + ')';
+    // x1, y1, x2, y2, interval, onEnd
+    bezierAnimation: function(callback, duration, options) {
+      var x1, y1, x2, y2, interval, onEnd;
+      function getAnimFunc(name) {
+        x1 = q.CSSTimingFunctions[name][0], y1 = q.CSSTimingFunctions[name][1], x2 = q.CSSTimingFunctions[name][2], y2 = q.CSSTimingFunctions[name][3];
+      }
+
+      // Setup ease values
+      if('x1' in options && 'y1' in options && 'x2' in options && 'y2' in options)
+        x1 = options.x1, y1 = options.y1, x2 = options.x2, y2 = options.y2;
+      else if(!('timingFunction' in options))
+        getAnimFunc('ease');
+      else if(!(options.timingFunction in q.CSSTimingFunctions))
+        throw new TypeError('Animation function not predefined');
+      else
+        getAnimFunc(options.timingFunction);
+
+      if('interval' in options && typeof(options.interval) == qs.tn)
+        interval = options.interval;
+
+      if('onend' in options && typeof(options.onend) == qs.tf)
+        onEnd = options.onend;
+
+      if(x1 < 0 || x1 > 1 || x2 < 0 || x2 > 1) throw new RangeError('X value(s) must be between 0 through 1');
+      if(typeof(duration) != qs.tn) throw new TypeError('duration not a number');
+      if(typeof(callback) != qs.tf) throw new TypeError('callback not a function');
+
+      var s = performance.now(), cancel = false;
+
+      function int() {
+        if(cancel) return;
+        var t = (performance.now() - s) / duration; // time passed
+        if(t > 1) {
+          callback(1);
+          if(onEnd) onEnd();
+          return;
+        }
+
+        var blow = 0, bhigh = 1, bmid, fout, num = qsettings.bezierAccuracy, tol = Math.pow(2, -num);
+        for(var i=0; i<num; i++) {
+          bmid = (blow + bhigh)/2;
+          fout = bezier(bmid, x1, y1, x2, y2);
+          if(Math.abs(fout.x - t) <= tol) break;
+          if(fout.x < t) blow = bmid;
+          else bhigh = bmid;
+        }
+        callback(fout.y);
+        if(interval) setTimeout(int, interval);
+        else requestAnimationFrame(int);
+      }
+
+      if(interval) setTimeout(int, interval);
+      else requestAnimationFrame(int);
+      return function() {
+        cancel = true;
+      }
     },
-    rotate: function(a, unit) {
-      if(!q.is(a)) throw new ReferenceError(qs.eNEA);
-      return 'rotate(' + a + ang(unit) + ')';
+    isCSSValueSupported: function(property, value) {
+      if(!detect) detect = newq('d');
+      return detect.style(property, value).style(property) == value;
     },
-    rotate3d: function(x, y, z, a, unit) {
-      if(!q.is(x, y, z, a)) throw new ReferenceError(qs.eNEA);
-      return 'rotate3d(' + x + ', ' + y + ', ' + z + ', ' + a + ang(unit) + ')';
-    },
-    rotatex: function(a, unit) {
-      if(!q.is(a)) throw new ReferenceError(qs.eNEA);
-      return 'rotatex(' + x + ang(unit) + ')';
-    },
-    rotatey: function(a, unit) {
-      if(!q.is(a)) throw new ReferenceError(qs.eNEA);
-      return 'rotatey(' + x + ang(unit) + ')';
-    },
-    rotatez: function(a, unit) {
-      if(!q.is(a)) throw new ReferenceError(qs.eNEA);
-      return 'rotatez(' + x + ang(unit) + ')';
-    },
-    scale: function(sx, sy) {
-      if(!q.is(sx)) throw new ReferenceError(qs.eNEA);
-      return 'scale(' + sx + (q.is(sy) ? ', ' + sy : '') + ')';
-    },
-    scale3d: function(sx, sy, sz) {
-      if(!q.is(sx, sy, sz)) throw new ReferenceError(qs.eNEA);
-      return 'scale3d(' + sx + ', ' + sy + ', ' + sz + ')';
-    },
-    scalex: function(sx) {
-      if(!q.is(sx)) throw new ReferenceError(qs.eNEA);
-      return 'scalex(' + sx + ')';
-    },
-    scaley: function(sy) {
-      if(!q.is(sy)) throw new ReferenceError(qs.eNEA);
-      return 'scalex(' + sy + ')';
-    },
-    scalez: function(sz) {
-      if(!q.is(sz)) throw new ReferenceError(qs.eNEA);
-      return 'scalex(' + sz + ')';
-    },
-    skew: function(ax, ay, unitx, unity) {
-      if(!q.is(ax)) throw new ReferenceError(qs.eNEA);
-      return 'skew(' + ax + ang(unitx) + (q.is(ay) ? ', ' + ay + ang(unity) : '') + ')';
-    },
-    skewx: function(ax, unitx) {
-      if(!q.is(ax)) throw new ReferenceError(qs.eNEA);
-      return 'skew(' + ax + ang(unitx) + ')';
-    },
-    skewy: function(ay, unitx) {
-      if(!q.is(ay)) throw new ReferenceError(qs.eNEA);
-      return 'skew(' + ay + ang(unity) + ')';
-    },
-    translate: function(tx, ty) {
-      if(!q.is(tx)) throw new ReferenceError(qs.eNEA);
-      return 'translate(' + css(tx) + (q.is(ty) ?  ncss(ty) : '') + ')';
-    },
-    translate3d: function(tx, ty, tz) {
-      if(!q.is(tx)) throw new ReferenceError(qs.eNEA);
-      return 'translate3d(' + css(tx) + (q.is(ty) ? ncss(ty) : '') + (q.is(tz) ? ncss(tz) : '') + ')';
-    },
-    translatex: function(tx) {
-      if(!q.is(tx)) throw new ReferenceError(qs.eNEA);
-      return 'translatex(' + css(tx) + ')';
-    },
-    translatey: function(ty) {
-      if(!q.is(ty)) throw new ReferenceError(qs.eNEA);
-      return 'translatey(' + css(ty) + ')';
-    },
-    translatez: function(tz) {
-      if(!q.is(tz)) throw new ReferenceError(qs.eNEA);
-      return 'translatez(' + css(tz) + ')';
-    }
   });
+
+  // Generate css functions
+  [
+    {
+      name: 'matrix',
+      versions: [
+        {
+          testfor: { numArguments: 1 },
+          argumentTypes: [ 0 ],
+        },
+        {
+          testfor: { numArguments: 6 },
+          argumentTypes: [ 0, 0, 0, 0, 0, 0 ]
+        }
+      ]
+    },
+    {
+      name: 'translate',
+      versions: [
+        {
+          testfor: { numArguments: 1 },
+          argumentTypes: [ 4 ]
+        },
+        {
+          testfor: { numArguments: 2 },
+          argumentTypes: [ 4, 4 ]
+        }
+      ]
+    },
+    {
+      name: 'translateX',
+      versions: [
+        {
+          testfor: { numArguments: 1 },
+          argumentTypes: [ 4 ]
+        }
+      ]
+    },
+    {
+      name: 'translateY',
+      versions: [
+        {
+          testfor: { numArguments: 1 },
+          argumentTypes: [ 4 ]
+        }
+      ]
+    },
+    {
+      name: 'scale',
+      versions: [
+        {
+          testfor: { numArguments: 1 },
+          argumentTypes: [ 0 ]
+        },
+        {
+          testfor: { numArguments: 2 },
+          argumentTypes: [ 0, 0 ]
+        }
+      ]
+    },
+    {
+      name: 'scaleX',
+      versions: [
+        {
+          testfor: { numArguments: 1 },
+          argumentTypes: [ 0 ]
+        }
+      ]
+    },
+    {
+      name: 'scaleY',
+      versions: [
+        {
+          testfor: { numArguments: 1 },
+          argumentTypes: [ 0 ]
+        }
+      ]
+    },
+    {
+      name: 'rotate',
+      versions: [
+        {
+          testfor: { numArguments: 1 },
+          argumentTypes: [ 1 ]
+        }
+      ]
+    },
+    {
+      name: 'skew',
+      versions: [
+        {
+          testfor: { numArguments: 1 },
+          argumentTypes: [ 1 ]
+        },
+        {
+          testfor: { numArguments: 2 },
+          argumentTypes: [ 1, 1 ]
+        }
+      ]
+    },
+    {
+      name: 'skewX',
+      versions: [
+        {
+          testfor: { numArguments: 1 },
+          argumentTypes: [ 1 ]
+        }
+      ]
+    },
+    {
+      name: 'skewY',
+      versions: [
+        {
+          testfor: { numArguments: 1 },
+          argumentTypes: [ 1 ]
+        }
+      ]
+    },
+    {
+      name: 'matrix3d',
+      versions: [
+        {
+          testfor: { numArguments: 1 },
+          argumentTypes: [ 0 ]
+        },
+        {
+          testfor: { numArguments: 16 },
+          argumentTypes: [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
+        }
+      ]
+    },
+    {
+      name: 'translate3d',
+      versions: [
+        {
+          testfor: { numArguments: 3 },
+          argumentTypes: [ 4, 4, 2 ]
+        }
+      ]
+    },
+    {
+      name: 'translateZ',
+      versions: [
+        {
+          testfor: { numArguments: 1 },
+          argumentTypes: [ 2 ]
+        }
+      ]
+    },
+    {
+      name: 'scale3d',
+      versions: [
+        {
+          testfor: { numArguments: 3 },
+          argumentTypes: [ 0, 0, 0 ]
+        }
+      ]
+    },
+    {
+      name: 'scaleZ',
+      versions: [
+        {
+          testfor: { numArguments: 1 },
+          argumentTypes: [ 0 ]
+        }
+      ]
+    },
+    {
+      name: 'rotate3d',
+      versions: [
+        {
+          testfor: { numArguments: 4 },
+          argumentTypes: [ 0, 0, 0, 1 ]
+        }
+      ]
+    },
+    {
+      name: 'rotateX',
+      versions: [
+        {
+          testfor: { numArguments: 1 },
+          argumentTypes: [ 1 ]
+        }
+      ]
+    },
+    {
+      name: 'rotateY',
+      versions: [
+        {
+          testfor: { numArguments: 1 },
+          argumentTypes: [ 1 ]
+        }
+      ]
+    },
+    {
+      name: 'rotateZ',
+      versions: [
+        {
+          testfor: { numArguments: 1 },
+          argumentTypes: [ 1 ]
+        }
+      ]
+    },
+    {
+      name: 'perspective',
+      versions: [
+        {
+          testfor: { numArguments: 1 },
+          argumentTypes: [ 2 ]
+        }
+      ]
+    }
+  ].foreach(q.generateCSSFunction);
 
   return q;
 })();
@@ -745,11 +1126,12 @@ var qelement = (function() {
     else throw new TypeError(qs.eNdOrTag);
     if(typeof(this.em.events) != qs.to) this.em.events = {};
     if(typeof(this.em.devents) != qs.to) this.em.devents = {};
-    if(typeof(this.em.extensions) == qs.to) this.extend(this.em.extensions);
+    // if(typeof(this.em.extensions) == qs.to) this.extend(this.em.extensions);
+    // TODO: Make the statement above faster
   }
   function css(a, y) {
     if(!q.is(a)) return '';
-    return (typeof(a) == qs.tn ? a + qsettings.defaultCSSUnit : a);
+    return (typeof(a) == qs.tn ? a.toFixed(3) + qsettings.defaultCSSUnits.length : a.trim());
   }
   qelement.extend({
     fromNodes: function(nodelist) {
@@ -771,8 +1153,7 @@ var qelement = (function() {
       return (test instanceof HTMLElement || test instanceof qelement || typeof(test) == qs.ts);
     }
   });
-  //TODO: add a function call limiter that can add values and run on different intervals (# or animationFrame)
-  var onextensions = {
+  qelement.onextensions = {
     resize: function(me, ev) {
       var style = {
         position: 'absolute',
@@ -853,10 +1234,10 @@ var qelement = (function() {
         }
         return this;
       }
-      var found = name in onextensions;
+      var isAnExtension = name in qelement.onextensions;
       if(!(name in this.em.events)) {
-        this.em.events[name] = new qevent(found ? {} : {'attachTo': this, 'name': name});
-        if(found) this.em.devents[name] = onextensions[name](this, this.em.events[name]);
+        this.em.events[name] = new qevent(isAnExtension ? {} : {'attachTo': this, 'name': name});
+        if(isAnExtension) this.em.devents[name] = qelement.onextensions[name](this, this.em.events[name]);
       }
       if(!q.is(func)) return this.em.events[name];
       if(callNow) func();
@@ -938,7 +1319,7 @@ var qelement = (function() {
     },
     outerHtml: function(h) {
       if(!q.is(h)) return this.em.outerHTML;
-      this.em.outerHtml = h;
+      this.em.outerHTML = h;
       return this;
     },
     children: function(index) {
@@ -966,6 +1347,11 @@ var qelement = (function() {
       return this.em.children.length;
     } },
     index: { get: function() {
+      var t = this.em, i = 0;
+      while((t=t.previousElementSibling) != null) i++;
+      return i;
+    } },
+    nodeIndex: { get: function() {
       var t = this.em, i = 0;
       while((t=t.previousSibling) != null) i++;
       return i;
@@ -1020,10 +1406,10 @@ var qelement = (function() {
       return s || this;
     },
     previousSibling: { get: function() {
-       return newq(this.em.previousSibling());
+       return newq(this.em.previousElementSibling);
     } },
     nextSibling: { get: function() {
-      return newq(this.em.nextSibling());
+      return newq(this.em.nextElementSibling);
     } },
     remove: function(child) {
       if(qelement.is(child)) {
@@ -1110,15 +1496,15 @@ var qelement = (function() {
     style: function(propname) {
       if(!q.is(propname)) return this.em.style;
       if(typeof(propname) == qs.to) {
-        var keys = propname.keys();
+        var keys = propname.getKeys();
         for(var i=0; i<keys.length; i++) this.em.style[!(keys[i] in qs.styles) && keys[i] in qs.styleAliases ? qs.styleAliases[keys[i]] : keys[i]] = css(propname[keys[i]]);
         return this;
       }
       if(!(1 in arguments)) return this.em.style[propname];
       //TODO: Create structure for every css property, to automate types?
-      var str = css(arguments[1].trim());
+      var str = css(arguments[1]);
       for(var i=2; i<arguments.length; i++) {
-        str += ' ' + css(arguments[i].trim());
+        str += ' ' + css(arguments[i]);
       }
 
       // Use browser-specific alias if property name is not valid, try to use the browser-specific alias if it exists.
@@ -1174,6 +1560,30 @@ var qelement = (function() {
       this.em.extensions[key] = value;
       return this;
     },
+    href: function(value, addListener) {
+      if(!q.is(value)) return this.em.getAttribute('href');
+      this.em.setAttribute('href', value);
+      if((addListener || (addListener == undefined && !(this.em instanceof HTMLAnchorElement))) && !('anchorEmulator' in this.on('click').names)) {
+        var t = this.em;
+        this.on('click', function anchorEmulator() {
+          location.pathname = t.getAttribute('href');
+        });
+      }
+      return this;
+    },
+    scroll: function(x, y) {
+      if(!q.is(x) && !q.is(y)) return {x: this.em.scrollLeft, y: this.em.scrollTop};
+      if(x != null) this.em.scrollLeft = x;
+      if(y != null) this.em.scrollTop = y;
+      return this;
+    },
+    clientRect: { get: function() {
+      return this.em.getBoundingClientRect();
+    } },
+    offsetTop: { get: function() { return this.em.offsetTop; } },
+    offsetBottom: { get: function() { return this.em.offsetBottom; } },
+    offsetLeft: { get: function() { return this.em.offsetLeft; } },
+    offsetRight: { get: function() { return this.em.offsetRight; } },
   });
   //Aliases
   //TODO: finish aliases
@@ -1205,6 +1615,7 @@ var qelement = (function() {
   return qelement;
 })();
 
+// TODO: Replace custom array with simple array wrapper (much faster)
 var qlist = (function() {
   function qlist() {
     var ref = arguments[0];
@@ -1229,7 +1640,10 @@ var qlist = (function() {
   qlist.prototype.extend({
     length: { get: function() {
       var l = -1;
-      for(var n in this) if(+n != NaN && +n > l) l = +n;
+      for(var n in this) {
+        if(+n != NaN && +n > l) l = +n; // Find last consecutive number, counts up
+        else break;
+      }
       return ++l;
     } },
     sum: function(prop) {
@@ -1246,6 +1660,11 @@ var qlist = (function() {
       for(var i=1; i<len; i++) out += it[i].toString;
       return out;
     },
+    foreach: function(callfor) {
+      var len = this.length;
+      for(var i=0; i<len; i++) callfor(this[i]);
+      return this;
+    }
   });
   // Extend all qelement functions to this
   var names = qelement.prototype.getOwnPropertyNames();
