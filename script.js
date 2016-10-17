@@ -150,7 +150,7 @@ q.onready(
 )(
   // Event Handlers
   () => {
-    var i, c, firstFunky = true;
+    var i, c, firstFunky = 2;
     var pcurr, poff, stickyEnabled = q.isCSSValueSupported('position', 'sticky');
     window
       .on('resize', () => {
@@ -239,7 +239,7 @@ q.onready(
             } else pcurr = curr;
           }
 
-          firstFunky = false;
+          firstFunky = Math.max(firstFunky - 1, 0);
         }, true);
       });
 
