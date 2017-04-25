@@ -41,6 +41,48 @@ e {
 info {
   display: none;
 }
+graph {
+  display: none;
+}
+.graph {
+  display: inline-grid;
+  background-color: #1c1f1e;
+  color: #e1e3e2;
+  padding: 10px;
+  border: 1px solid #00b887;
+}
+  .graph .graph-title {
+    font-size: 22px;
+    padding: 5px;
+    text-align: center;
+    grid-column-start: 1;
+    grid-column-end: 4;
+    grid-row: 1;
+  }
+  .graph .graph-iv-title {
+    transform: rotate(180deg);
+    writing-mode: vertical-rl;
+    grid-column: 1;
+    grid-row: 2;
+    text-align: center;
+    margin-right: 15px;
+  }
+  .graph canvas {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .graph .graph-dv-title {
+    margin-top: 15px;
+    grid-column: 2;
+    grid-row: 3;
+    text-align: center;
+  }
+  .graph .graph-legend {
+    grid-column: 3;
+    grid-row: 2;
+    padding: 5px;
+    margin-left: 15px;
+  }
 
 #sidebar {
   position: fixed;
