@@ -2,11 +2,22 @@ body {
   margin: 0;
   font-family: Lato, Calibri;
 }
-input, select {
+.katex {
+  font-family: 'Quicksand';
+  font-size: 19.36px;
+}
+  .katex .mathit {
+    font-size: 15px;
+  }
+input, select, .inputstyle {
   padding: 5px 8px;
+  font-family: 'Quicksand';
+  font-size: 13.333333px;
 }
   .out {
-    color: black;
+    color: #e1e3e2;
+    background-color: #1c1f1e;
+    border: 1px solid #00b887;
   }
 .u {
   -ms-user-select: none;
@@ -16,12 +27,11 @@ input, select {
   cursor: default;
 }
 m {
-  font-family: 'Merriweather', sans-serif;
-  font-size: 13px;
+  font-family: sans-serif;
 }
-  m .katex {
-    font-size: 19.36px;
-  }
+span.mskip {
+  font-family: Lato, Calibri;
+}
 e {
   color: red;
   font-family: monospace;
