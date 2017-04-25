@@ -1,3 +1,6 @@
+if('require' in window)
+  require("qstoolkit.js");
+
 'use strict';
 // Setup
 q.setup({
@@ -134,7 +137,8 @@ function scrollSidebar(useli) {
   var w = sidelistWidth(), side = qc('#sidelist .sidescroll-container'), cChild = side.childCount, i, po, no;
 
   // Setup scrolling variables
-  if(useli) lscroll = w * li;
+  if(useli)
+    lscroll = w * li;
   lscroll = lscroll.bound(0, _lscrollMax);
   li = lscroll / w;
 
@@ -762,11 +766,12 @@ q.onready(
           if(e.deltaMode == 1) dx *= 19;
           else if(e.deltaMode == 2) dx *= side.width;
           lscroll += dx;
+          if(!qc('#sidelist').hasClass('scrolling'))
+            qc('#sidelist, #sidelistindex')
+              .addClass('scrolling');
+          scrollSidebar();
           if(lscroll != spx) {
-            if(!qc('#sidelist').hasClass('scrolling'))
-              qc('#sidelist, #sidelistindex')
-                .addClass('scrolling');
-            scrollSidebar();
+            e.preventDefault();
           }
 
           function snap() {
@@ -792,25 +797,286 @@ q.onready(
 )(
   // Math processing
   () => {
-    var text, out, i, c, xor = 1, i0;
+    var htmlin, htmlout;
+    var i, c;
+    var mathStartIndex, skipStartIndex;
+    var mathxor, skipxor;
+
+    function outputMath() {
+      try {
+        htmlout += katex.renderToString(htmlin.substr(mathStartIndex, i - mathStartIndex).replace(/  /g, '\\space '));
+      } catch(e) {
+        htmlout += '<e>' + htmlin.substr(mathStartIndex, i - mathStartIndex) + '</e>';
+        console.error(e.message);
+      }
+    }
+    function outputSkip() {
+      htmlout += '<span class="mskip">' + htmlin.substr(skipStartIndex, i - skipStartIndex) + '</span>';
+    }
+
     q('m', {forceList: true}).foreach((em) => {
-      text = em.html(), out = '';
-      for(i=0, c=text.length; i<c; i++) {
-        if(text[i] == '`') {
-          xor ^= 1; // 0 means math
-          if(!xor)
-            i0 = i + 1;
-          else {
-            try {
-              out += katex.renderToString(text.substr(i0, i - i0));
-            } catch(e) {
-              out += '<e>' + text.substr(i0, i - i0) + '</e>';
-              console.log(e.message);
+      htmlin = em.html(), htmlout = '';
+      mathxor = 1;
+      skipxor = 1;
+
+      for(i = 0, c = htmlin.length; i < c; i++) {
+        if(htmlin[i] == '`') {
+          if(!skipxor) {
+            skipxor = 1;
+            outputSkip();
+          }
+
+          mathxor ^= 1; // 0 means math
+          if(!mathxor)
+            mathStartIndex = i + 1;
+          else
+            outputMath();
+        } else if(htmlin[i] == '|') {
+          if(!mathxor) {
+            mathxor = 1;
+            outputMath();
+          }
+
+          skipxor ^= 1; // 0 means skip
+          if(!skipxor)
+            skipStartIndex = i + 1;
+          else
+            outputSkip();
+        } else if(skipxor && mathxor)
+          htmlout += htmlin[i];
+      }
+
+      em.html(htmlout);
+    });
+  }
+)(
+  // Input processing (quick and dirty)
+  () => {
+    q('input.number', {forceList: true}).on('keydown', (e) => {
+      if(!/^[0-9.]|Backspace|Arrow(?:Left|Right|Up|Down)|Delete$/.test(e.getKey()))
+        e.preventDefault();
+      else if(e.getKey() == '.' && /\./.test(e.target.value))
+        e.preventDefault();
+    });
+  }
+)(
+  // Permalink generation
+  () => {
+    // TODO later
+  }
+)(
+  // Graph generation
+  () => {
+    q('graph', {forceList: true}).foreach((em) => {
+      var options = {}, finalOptions = {};
+
+      var lines = em.html().replace(/<!--(?:.|\n)*?-->/gm, '').split(';') || [], tmp;
+
+      lines.forEach((line) => {
+        if(line.trim() == '')
+          return;
+
+        var propName = line.substr(0, line.indexOf(':')).trim();
+        var valueText = line.substr(line.indexOf(':') + 1).trim();
+
+        var stringType, symbol = '', type, escape, finishSymbol;
+        var symbolStack = [];
+
+        // Parse line into symbols
+        for(var i = 0; i < valueText.length; i++) {
+          if(escape) {
+            symbol += valueText[i];
+            escape = false;
+            continue;
+          }
+          if(valueText[i] == '\\') {
+            escape = true;
+            continue;
+          }
+
+          if(valueText[i] == '"' && stringType == null) {
+            if(finishSymbol)
+              finishSymbol();
+
+            // Check for double-quoted string
+            stringType = '"';
+            type = 'string';
+          } else if(valueText[i] == "'" && stringType == null) {
+            if(finishSymbol)
+              finishSymbol();
+
+            // Check for single-quoted string
+            stringType = "'";
+            type = 'string';
+          } else if(valueText[i] === stringType) {
+            // Push string onto stack
+            symbolStack.push({value: symbol, type});
+
+            symbol = '';
+            stringType = undefined;
+            type = undefined;
+          } else if(stringType) {
+            // Fill in string contents
+            symbol += valueText[i];
+          } else if(/[0-9.-]/.test(valueText[i]) && (type == undefined || type == 'number')) {
+            // Do number
+            symbol += valueText[i];
+            type = 'number';
+            finishSymbol = () => {
+              symbolStack.push({value: symbol, type});
+
+              symbol = '';
+              type = undefined;
+              finishSymbol = undefined;
+            }
+          } else if((/[a-zA-Z_-]/.test(valueText[i]) && type == undefined) || (/[a-zA-Z0-9_-]/.test(valueText[i]) && type == 'value')) {
+            // Do value type (like 'none', or 'smooth')
+            symbol += valueText[i];
+            type = 'value';
+            finishSymbol = () => {
+              symbolStack.push({value: symbol, type});
+
+              symbol = '';
+              type = undefined;
+              finishSymbol = undefined;
+            }
+          } else if(valueText[i] == '{') {
+            if(finishSymbol)
+              finishSymbol();
+
+            // Begin new object
+            symbolStack.push({value: 'objectStart', type: 'punctuation'});
+          } else if(valueText[i] == '}') {
+            if(finishSymbol)
+              finishSymbol();
+
+            // End new object
+            symbolStack.push({value: 'objectEnd', type: 'punctuation'});
+          } else if(valueText[i] == '(') {
+            if(finishSymbol)
+              finishSymbol();
+
+            // End new object
+            symbolStack.push({value: 'pairStart', type: 'punctuation'});
+          } else if(valueText[i] == ')') {
+            if(finishSymbol)
+              finishSymbol();
+
+            // End new object
+            symbolStack.push({value: 'pairEnd', type: 'punctuation'});
+          } else if(valueText[i] == ',') {
+            if(finishSymbol)
+              finishSymbol();
+
+            // Next object in list
+            symbolStack.push({value: 'comma', type: 'punctuation'});
+          } else if(/\w/.test(valueText[i])) {
+            // Symbols cannot span a space, so stop then if they do
+            if(finishSymbol)
+              finishSymbol();
+          }
+        }
+        if(finishSymbol)
+          finishSymbol();
+
+        // Generate JavaScript object based on symbols
+
+        var value;
+
+        if(symbolStack[0].type == 'punctuation' && symbolStack[0].value == 'objectStart') {
+          symbolStack.shift();
+          value = {type: 'object', value: []}
+        } else {
+          value = symbolStack.shift();
+          options[propName] = value;
+          return;
+        }
+
+        var objStack = [value], objIndex = 1;
+
+        while(symbolStack.length > 0) {
+          tmp = symbolStack.shift();
+
+          if(tmp.type != 'punctuation') {
+            if(!objStack[objIndex])
+              objStack[objIndex] = tmp;
+          } else {
+            if(objStack[objIndex] && tmp.value == 'comma') {
+              // Add stacked object into list and clear stack frame
+              if(objStack[objIndex - 1].type == 'object')
+                objStack[objIndex - 1].value.push(objStack[objIndex]);
+              else {
+                if(!('x' in objStack[objIndex - 1].value))
+                  objStack[objIndex - 1].value.x = objStack[objIndex];
+                else if(!('y' in objStack[objIndex - 1].value))
+                  objStack[objIndex - 1].value.y = objStack[objIndex];
+              }
+              objStack[objIndex] = undefined;
+            } else {
+              if(!objStack[objIndex] && tmp.value == 'objectStart') {
+                  // Add new list onto the stack
+                  objStack[objIndex] = {type: 'object', value: []};
+                  objIndex++;
+              } else if(!objStack[objIndex] && tmp.value == 'pairStart') {
+                // Add a new pair onto the stack
+                objStack[objIndex] = {type: 'pair', value: {}};
+                objIndex++;
+              } else if(['objectEnd', 'pairEnd'].includes(tmp.value)) {
+                  // Finish the current stack frame, adding the last object if there was no comma
+                  if(objStack[objIndex - 1].type == 'object')
+                    objStack[objIndex - 1].value.push(objStack[objIndex]);
+                  else {
+                    if(!('x' in objStack[objIndex - 1].value))
+                      objStack[objIndex - 1].value.x = objStack[objIndex];
+                    else if(!('y' in objStack[objIndex - 1].value))
+                      objStack[objIndex - 1].value.y = objStack[objIndex];
+                  }
+                  objStack[objIndex] = undefined;
+                  objIndex--;
+              }
             }
           }
-        } else if(xor) out += text[i];
+        }
+
+        options[propName] = value;
+      });
+
+      var paths = options.path();
+      var pathKeys = paths.getKeys();
+
+      for(var i = 0; i < pathKeys.length; i++) {
+        if(/^.+\.type$/.test(pathKeys[i])) {
+          delete paths[pathKeys[i]];
+        }
       }
-      em.html(out);
+
+      pathKeys = paths.getKeys();
+      var pathStack, outObj, inObj;
+      for(i = 0; i < pathKeys.length; i++) {
+        outObj = finalOptions, inObj = options;
+
+        pathStack = pathKeys[i].replace(/\.value/g, '').split('.');
+
+        for(var j = 0; j < pathStack.length; j++) {
+          if(j == pathStack.length - 1) {
+            if(inObj[pathStack[j]].type == 'number')
+              outObj[pathStack[j]] = parseFloat(inObj[pathStack[j]].value);
+            else
+              outObj[pathStack[j]] = inObj[pathStack[j]].value;
+          } else {
+            if(!(pathStack[j] in outObj)) {
+              if(inObj[pathStack[j]].type == 'object')
+                outObj[pathStack[j]] = [];
+              else if(inObj[pathStack[j]].type = 'pair')
+                outObj[pathStack[j]] = {};
+            }
+            outObj = outObj[pathStack[j]];
+            inObj = inObj[pathStack[j]].value;
+          }
+        }
+      }
+
+      em.insertAfterThis(makeGraph(finalOptions));
     });
   }
 );
