@@ -2,11 +2,22 @@ body {
   margin: 0;
   font-family: Lato, Calibri;
 }
-input, select {
+.katex {
+  font-family: 'Quicksand';
+  font-size: 19.36px;
+}
+  .katex .mathit {
+    font-size: 15px;
+  }
+input, select, .inputstyle {
   padding: 5px 8px;
+  font-family: 'Quicksand';
+  font-size: 13.333333px;
 }
   .out {
-    color: black;
+    color: #e1e3e2;
+    background-color: #1c1f1e;
+    border: 1px solid #00b887;
   }
 .u {
   -ms-user-select: none;
@@ -16,12 +27,11 @@ input, select {
   cursor: default;
 }
 m {
-  font-family: 'Merriweather', sans-serif;
-  font-size: 13px;
+  font-family: sans-serif;
 }
-  m .katex {
-    font-size: 19.36px;
-  }
+span.mskip {
+  font-family: Lato, Calibri;
+}
 e {
   color: red;
   font-family: monospace;
@@ -31,6 +41,48 @@ e {
 info {
   display: none;
 }
+graph {
+  display: none;
+}
+.graph {
+  display: inline-grid;
+  background-color: #1c1f1e;
+  color: #e1e3e2;
+  padding: 10px;
+  border: 1px solid #00b887;
+}
+  .graph .graph-title {
+    font-size: 22px;
+    padding: 5px;
+    text-align: center;
+    grid-column-start: 1;
+    grid-column-end: 4;
+    grid-row: 1;
+  }
+  .graph .graph-iv-title {
+    transform: rotate(180deg);
+    writing-mode: vertical-rl;
+    grid-column: 1;
+    grid-row: 2;
+    text-align: center;
+    margin-right: 15px;
+  }
+  .graph canvas {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .graph .graph-dv-title {
+    margin-top: 15px;
+    grid-column: 2;
+    grid-row: 3;
+    text-align: center;
+  }
+  .graph .graph-legend {
+    grid-column: 3;
+    grid-row: 2;
+    padding: 5px;
+    margin-left: 15px;
+  }
 
 #sidebar {
   position: fixed;
@@ -197,6 +249,7 @@ info {
       padding: 16px;
       border-radius: 1.5px;
       box-shadow: 0 0 12px 0 rgba(28, 31, 30, .15);
+      overflow-x: auto;
     }
       .topic-header h2 {
         margin-top: 0;
@@ -204,6 +257,10 @@ info {
       .topic-header b {
         color: #070707;
       }
+
+.ex {
+  padding-left: 10%;
+}
 
 .flex {
   display: flex;
@@ -248,3 +305,16 @@ info {
 .mgnc-5 > * {
   margin: 5px
 }
+
+.sdc.outputs .sigfigs.out {
+  display: flex;
+}
+  .sdc.outputs .ignored, .sdc.outputs .important {
+    display: inline-block;
+  }
+    .sdc.outputs .ignored {
+      text-decoration: #fbff1d underline;
+    }
+    .sdc.outputs .important {
+      text-decoration: #20de38 underline;
+    }
