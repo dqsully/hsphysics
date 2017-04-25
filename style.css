@@ -249,6 +249,7 @@ graph {
       padding: 16px;
       border-radius: 1.5px;
       box-shadow: 0 0 12px 0 rgba(28, 31, 30, .15);
+      overflow-x: auto;
     }
       .topic-header h2 {
         margin-top: 0;
@@ -256,6 +257,10 @@ graph {
       .topic-header b {
         color: #070707;
       }
+
+.ex {
+  padding-left: 10%;
+}
 
 .flex {
   display: flex;
@@ -300,3 +305,16 @@ graph {
 .mgnc-5 > * {
   margin: 5px
 }
+
+.sdc.outputs .sigfigs.out {
+  display: flex;
+}
+  .sdc.outputs .ignored, .sdc.outputs .important {
+    display: inline-block;
+  }
+    .sdc.outputs .ignored {
+      text-decoration: #fbff1d underline;
+    }
+    .sdc.outputs .important {
+      text-decoration: #20de38 underline;
+    }
