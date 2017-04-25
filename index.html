@@ -24,8 +24,8 @@
       <div id="sidelistindex" class="u">
         <div class="sidescroll-container">
           <div class="active">Table of Contents</div>
-          <div>Examples</div>
-          <div>Tables</div>
+          <div>Tools and Examples</div>
+          <div>Tables and Info</div>
         </div>
       </div>
       <div id="sidelist">
@@ -68,9 +68,9 @@
             <h2>What I Used</h2>
             <p>
               <b>Note: if you don't care about how I programmed this, please skip this part.</b>
-              To actually create this website, I have used a couple fonts from Google Fonts (Merriweather for physical units and the like, and Lato for the rest of the site), KaTeX which is a library to display math (project from Khan Academy), FontAwesome icons, and, in my toolkit, I include a Promises polyfil.
+              To actually create this website, I have used a couple fonts from Google Fonts (Merriweather for physical units and the like, and Lato for the rest of the site), KaTeX which is a library to display math (project from Khan Academy), a library for cubic splines, FontAwesome icons, and my toolkit.
               All of the other code I have written myself, including <a href="https://github.com/dqsully/q-s-JS-toolkit">Q's Toolkit</a>, an exploration by myself to create a library that would make programming websites easier.
-              It is inspired by jQuery, but focusing on speed and universality instead. (jQuery is simplified and therefore specialized, my toolkit, although not as widely supported by browsers, allows the programmer much more control.)
+              It is inspired by jQuery, but focusing on speed and universality instead. (jQuery has a lot of shortcuts under the same name, therefore [sometimes] simplifying the programming process, but specializing it too. In contrast, my toolkit, although not as widely supported by browsers, allows the programmer much more control to build up their own specialized shortcuts with a generic library.)
             </p>
           </div>
         </div>
@@ -88,140 +88,73 @@
               This means that every unit of a certain measurement is some factor of 10 in ratio to another of the same measurement.
               Shown below is a quick table of common metric conversions (replace "meter" with whatever unit you like), which both serves as the definition for metric units and the conversion to the base unit (in this case, meters).
               When converting between any units, the generally accepted way is to use a fraction defined by the ratio between the unit you'd like to get and the unit you have.
-              The calculator further below shows this very nicely.
-              I will not show any shortcuts, as I have mentioned before, but I will mention that one exists using one of the laws of exponents. (You can find it on my <a href="http://dqsully.github.io/HSTrigonometry/default.html">Trigonometry Website</a> [It really sucks compared to this site, doesn't it?]).
+              The calculator below shows this very nicely.
+              I will not show any shortcuts, as I have mentioned before, but I will mention that one exists using one of the laws of exponents. (You can find it on my old <a href="http://dqsully.github.io/HSTrigonometry/default.html">Trigonometry Website</a>).
             </p>
             <div>
               <h3>Common Metric Conversions</h3>
+              <i>Note that the unit `meter` can be replaced with any <a href="https://en.wikipedia.org/wiki/International_System_of_Units">SI Unit</a>.</i>
               <info>
                 implements: table;
               </info>
-              <table>
-                <tr>
-                  <th>Unit</th>
-                  <th><m>`=`</m></th>
-                  <th colspan="3">in Meters</th>
-                </tr>
-                <tr>
-                  <td>
-                    <m>`1` kilometer</m>
-                  </td>
-                  <td>
-                    <m>`=`</m>
-                  </td>
-                  <td>
-                    <m>`10^{3}`</m>
-                  </td>
-                  <td>
-                    <m>or</m>
-                  </td>
-                  <td>
-                    <m>`1000` meters</m>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <m>`1` hectameter</m>
-                  </td>
-                  <td>
-                    <m>`=`</m>
-                  </td>
-                  <td>
-                    <m>`10^{2}`</m>
-                  </td>
-                  <td>
-                    <m>or</m>
-                  </td>
-                  <td>
-                    <m>`100` meters</m>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <m>`1` decameter</m>
-                  </td>
-                  <td>
-                    <m>`=`</m>
-                  </td>
-                  <td>
-                    <m>`10^{1}`</m>
-                  </td>
-                  <td>
-                    <m>or</m>
-                  </td>
-                  <td>
-                    <m>`10` meters</m>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <m>`1` meter</m>
-                  </td>
-                  <td>
-                    <m>`=`</m>
-                  </td>
-                  <td>
-                    <m>`10^{0}`</m>
-                  </td>
-                  <td>
-                    <m>or</m>
-                  </td>
-                  <td>
-                    <m>`1` meter</m>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <m>`1` decimeter</m>
-                  </td>
-                  <td>
-                    <m>`=`</m>
-                  </td>
-                  <td>
-                    <m>`10^{-1}`</m>
-                  </td>
-                  <td>
-                    <m>or</m>
-                  </td>
-                  <td>
-                    <m>`0.1` meters</m>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <m>`1` centimeter</m>
-                  </td>
-                  <td>
-                    <m>`=`</m>
-                  </td>
-                  <td>
-                    <m>`10^{-2}`</m>
-                  </td>
-                  <td>
-                    <m>or</m>
-                  </td>
-                  <td>
-                    <m>`0.01` meters</m>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <m>`1` millimeter</m>
-                  </td>
-                  <td>
-                    <m>`=`</m>
-                  </td>
-                  <td>
-                    <m>`10^{-3}`</m>
-                  </td>
-                  <td>
-                    <m>or</m>
-                  </td>
-                  <td>
-                    <m>`0.001` meters</m>
-                  </td>
-                </tr>
-              </table>
+              <m>
+                <table>
+                  <tr>
+                    <th>|Unit|</th>
+                    <th><m>`=`</m></th>
+                    <th colspan="3">|in Meters|</th>
+                  </tr>
+                  <tr>
+                    <td>`1  kilometer`</td>
+                    <td>`=`</td>
+                    <td>`10^{3}`</td>
+                    <td>or</td>
+                    <td>`1000  meters`</td>
+                  </tr>
+                  <tr>
+                    <td>`1  hectameter`</td>
+                    <td>`=`</td>
+                    <td>`10^{2}`</td>
+                    <td>or</td>
+                    <td>`100  meters`</td>
+                  </tr>
+                  <tr>
+                    <td>`1  decameter`</td>
+                    <td>`=`</td>
+                    <td>`10^{1}`</td>
+                    <td>or</td>
+                    <td>`10  meters`</td>
+                  </tr>
+                  <tr>
+                    <td>`1  meter`</td>
+                    <td>`=`</td>
+                    <td>`10^{0}`</td>
+                    <td>or</td>
+                    <td>`1  meter`</td>
+                  </tr>
+                  <tr>
+                    <td>`1  decimeter`</td>
+                    <td>`=`</td>
+                    <td>`10^{-1}`</td>
+                    <td>or</td>
+                    <td>`0.1  meters`</td>
+                  </tr>
+                  <tr>
+                    <td>`1  centimeter`</td>
+                    <td>`=`</td>
+                    <td>`10^{-2}`</td>
+                    <td>or</td>
+                    <td>`0.01  meters`</td>
+                  </tr>
+                  <tr>
+                    <td>`1  millimeter`</td>
+                    <td>`=`</td>
+                    <td>`10^{-3}`</td>
+                    <td>or</td>
+                    <td>`0.001  meters`</td>
+                  </tr>
+                </table>
+              </m>
             </div>
             <div>
               <h3>Metric Conversion Calculator</h3>
@@ -229,7 +162,7 @@
                 implements: example;
               </info>
               <div class="flex center mgnc-5 mcc inputs" style="height: 39px">
-                <input type="number" value="0" class="number">
+                <input type="text" class="number">
                 <select class="prefix">
                   <option value="24">yotta</option>
                   <option value="21">zetta</option>
@@ -253,13 +186,13 @@
                   <option value="-21">zepto</option>
                   <option value="-24">yocto</option>
                 </select>
-                <input type="text" class="unit" value="meters" placeholder="base unit to display">
+                <input type="text" class="unit" value="meter" placeholder="Base unit to display">
               </div>
               <div class="flex center mcc totext" style="height: 26px">
                 <span class="nogrow auto txtmgn">- to -</span>
               </div>
               <div class="flex center mgnc-5 mcc outputs" style="height: 39px">
-                <input class="number out" value="0" disabled>
+                <input class="number out" readonly>
                 <select class="prefix">
                   <option value="24">yotta</option>
                   <option value="21">zetta</option>
@@ -283,7 +216,7 @@
                   <option value="-21">zepto</option>
                   <option value="-24">yocto</option>
                 </select>
-                <input class="unit out" value="meters" disabled>
+                <input class="unit out" value="meters" readonly>
               </div>
               <div class="flex center mcc explanation" style="height: 65px">
                 <div class="nogrow auto txtmgn"></div>
@@ -292,18 +225,378 @@
           </div>
           <div class="topic-header">
             <h2>English to Metric and Metric to English Conversions</h2>
+            <p>
+              The <b>Imperial Measurement System</b> really sucks in comparison to the Metric System, as every unit is in seemingly random ratios to all of the other units, instead of just base 10.
+            </p>
+            <div>
+              <h3>Examples of Terrible English Units</h3>
+              <i>Note: this is just for units of volume, this rediculousness exists across all of the different imperial units!</i>
+              <info>
+                implements: table;
+              </info>
+              <m>
+                <table>
+                  <tr>
+                    <th>|Unit|</th>
+                    <th>`=`</th>
+                    <th>|in Minims|</th>
+                  </tr>
+                  <tr>
+                    <td>`1  minim`</td>
+                    <td>`=`</td>
+                    <td>`1  minim`</td>
+                  </tr>
+                  <tr>
+                    <td>`1  dram`</td>
+                    <td>`=`</td>
+                    <td>`60  minims`</td>
+                  </tr>
+                  <tr>
+                    <td>`1  teaspoon`</td>
+                    <td>`=`</td>
+                    <td>`80  minims`</td>
+                  </tr>
+                  <tr>
+                    <td>`1  tablespoon`</td>
+                    <td>`=`</td>
+                    <td>`240  minims`</td>
+                  </tr>
+                  <tr>
+                    <td>`1  ounce`</td>
+                    <td>`=`</td>
+                    <td>`480  minims`</td>
+                  </tr>
+                  <tr>
+                    <td>`1  shot`</td>
+                    <td>`=`</td>
+                    <td>`720  minims`</td>
+                  </tr>
+                  <tr>
+                    <td>`1  gill`</td>
+                    <td>`=`</td>
+                    <td>`960 minims`</td>
+                  </tr>
+                  <tr>
+                    <td>`1  cup`</td>
+                    <td>`=`</td>
+                    <td>`1920  minims`</td>
+                  </tr>
+                  <tr>
+                    <td>`1  pint`</td>
+                    <td>`=`</td>
+                    <td>`3840  minims`</td>
+                  </tr>
+                  <tr>
+                    <td>`1  quart`</td>
+                    <td>`=`</td>
+                    <td>`7860  minims`</td>
+                  </tr>
+                  <tr>
+                    <td>`1  gallon`</td>
+                    <td>`=`</td>
+                    <td>`30720  minims`</td>
+                  </tr>
+                  <tr>
+                    <td>`1  barrel`</td>
+                    <td>`=`</td>
+                    <td>`97680  minims`</td>
+                  </tr>
+                  <tr>
+                    <td>`1  oil  barrel`</td>
+                    <td>`=`</td>
+                    <td>`1290240  minims`</td>
+                  </tr>
+                  <tr>
+                    <td>`1  hogshead`</td>
+                    <td>`=`</td>
+                    <td>`1935360  minims`</td>
+                  </tr>
+                </table>
+              </m>
+            </div>
+            <div>
+              <h3>English to Metric Calculator (volume)</h3>
+              <p>
+                With this table and a single conversion between English and Metric (<m>`1  minim = 1.23229167e-4  liters`</m>), we can now calculate any English to Metric conversion in the same type of unit.
+              </p>
+              <info>
+                implements: example;
+              </info>
+              <div class="flex center mgnc-5 etmcc inputs" style="height: 39px">
+                <input type="text" class="number">
+                <select class="unit">
+                  <option metric value="24">yottaliter</option>
+                  <option metric value="21">zettaliter</option>
+                  <option metric value="18">exaliter</option>
+                  <option metric value="15">petaliter</option>
+                  <option metric value="12">teraliter</option>
+                  <option metric value="9">gigaliter</option>
+                  <option metric value="6">megaliter</option>
+                  <option metric value="3">kiloliter</option>
+                  <option metric value="2">hectoliter</option>
+                  <option metric value="1">dekaliter</option>
+                  <option metric value="0" selected>liter</option>
+                  <option metric value="-1">deciliter</option>
+                  <option metric value="-2">centiliter</option>
+                  <option metric value="-3">milliliter</option>
+                  <option metric value="-6">microliter</option>
+                  <option metric value="-9">nanoliter</option>
+                  <option metric value="-12">picoliter</option>
+                  <option metric value="-15">femtoliter</option>
+                  <option metric value="-18">attoliter</option>
+                  <option metric value="-21">zeptoliter</option>
+                  <option metric value="-24">yoctoliter</option>
+                  <option imperial value="1">minim</option>
+                  <option imperial value="60">dram</option>
+                  <option imperial value="80">teaspoon</option>
+                  <option imperial value="240">tablespoon</option>
+                  <option imperial value="480">ounce</option>
+                  <option imperial value="720">shot</option>
+                  <option imperial value="960">gill</option>
+                  <option imperial value="1920">cup</option>
+                  <option imperial value="3840">pint</option>
+                  <option imperial value="7860">quart</option>
+                  <option imperial value="30720">gallon</option>
+                  <option imperial value="97680">barrel</option>
+                  <option imperial value="1290240">oil barrel</option>
+                  <option imperial value="1935360">hogshead</option>
+                </select>
+              </div>
+              <div class="flex center etmcc totext" style="height: 26px">
+                <span class="nogrow auto txtmgn">- to -</span>
+              </div>
+              <div class="flex center mgnc-5 etmcc outputs" style="height: 39px">
+                <input class="number out" readonly>
+                <select class="unit">
+                  <option metric value="24">yottaliter</option>
+                  <option metric value="21">zettaliter</option>
+                  <option metric value="18">exaliter</option>
+                  <option metric value="15">petaliter</option>
+                  <option metric value="12">teraliter</option>
+                  <option metric value="9">gigaliter</option>
+                  <option metric value="6">megaliter</option>
+                  <option metric value="3">kiloliter</option>
+                  <option metric value="2">hectoliter</option>
+                  <option metric value="1">dekaliter</option>
+                  <option metric value="0" selected>liter</option>
+                  <option metric value="-1">deciliter</option>
+                  <option metric value="-2">centiliter</option>
+                  <option metric value="-3">milliliter</option>
+                  <option metric value="-6">microliter</option>
+                  <option metric value="-9">nanoliter</option>
+                  <option metric value="-12">picoliter</option>
+                  <option metric value="-15">femtoliter</option>
+                  <option metric value="-18">attoliter</option>
+                  <option metric value="-21">zeptoliter</option>
+                  <option metric value="-24">yoctoliter</option>
+                  <option imperial value="1">minim</option>
+                  <option imperial value="60">dram</option>
+                  <option imperial value="80">teaspoon</option>
+                  <option imperial value="240">tablespoon</option>
+                  <option imperial value="480">ounce</option>
+                  <option imperial value="720">shot</option>
+                  <option imperial value="960">gill</option>
+                  <option imperial value="1920">cup</option>
+                  <option imperial value="3840">pint</option>
+                  <option imperial value="7860">quart</option>
+                  <option imperial value="30720">gallon</option>
+                  <option imperial value="97680">barrel</option>
+                  <option imperial value="1290240">oil barrel</option>
+                  <option imperial value="1935360">hogshead</option>
+                </select>
+              </div>
+              <div class="flex center etmcc explanation" style="height: 65px">
+                <div class="nogrow auto txtmgn"></div>
+              </div>
+            </div>
           </div>
           <div class="topic-header">
             <h2>Estimation</h2>
+            <p>
+              Say you are given a task: infer the number of jelly beans in a jar, without touching a single bean.
+              How could someone possibly achieve this with any accuracy?
+              Estimation.
+            </p>
+            <p>
+              With this problem, let's say that the jar is a perfect cylinder with an inner radius of 2 inches and an inner height of 10 inches.
+              Now we can calculate the inner volume (<m>`\pi*2^2*10=40\pi  in^3\approx 125.66  in^3`</m>) and then using a small-scale measurement of beans per cubic inch (say, <m>`15  beans\text{ per }in^3`</m>), we can easily scale up and estimate the answer to the problem (<m>`15  beans\text{ per }in^3*125.66  in^3\approx 1885  beans`</m>).
+            </p>
           </div>
           <div class="topic-header">
             <h2>Significant Figures, Scientific Notation, and Uncertainty</h2>
+            <p>
+              The significant figures of a number are basically the important digits.
+              Extraneous zeroes on the left side are never important, and on the right only if the decimal point is present (try removing the decimal point and see what happens).
+              Below is an example you can play with which highlights the signifiant digits of any number on the left, and converts the number to scientific notation on the right.
+            </p>
+            <p>
+              Also, scientific notation is a way to write any number with the correct number of significant digits.
+              Take <m>`10. * 10`</m>, for example (notice the decimal point on the first ten).
+              The answer is <m>`100`</m>, but with two significant digits.
+              Scientific notation solves this by taking <b>orders of magnitude</b> (powers of ten) from the number until there is only one decimal before the decimal point; then, somehow mark how many orders of magnitude you added or took away.
+              In this example, the equation in scientific notation would be <m>`1.0e1 * 1e1 = 1.0e2`</m>.
+              In this example the letter <m>`e`</m> means that the next number is the order of magnitude, but someone could also write <m>`10^x`</m> instead, and here's what that would look like: <m>`(1.0*10^1) * (1*10^1) = (1.0*10^2)`</m>.
+              To make it easier to read, I will continue to use the letter <m>`e`</m>, but it generally makes more sense to people to use the other way.
+            </p>
+            <div>
+              <h3>Significant Digits Calculator/Scientific Notation Converter</h3>
+              <info>
+                  implements: example;
+              </info>
+              <div class="flex center mgnc-5 sdc inputs" style="height:39px">
+                <input type="text" class="number">
+              </div>
+              <div class="flex center mgnc-5 sdc outputs">
+                <div class="sigfigs out inputstyle">
+                  <span class="ignored prefix"></span>
+                  <span class="important"></span>
+                  <span class="ignored postfix"></span>
+                </div>
+                <div class="scientific out inputstyle">
+                </div>
+              </div>
+            </div>
+            <p>
+              The reason we use significant figures, especially in science, is because we want to keep track of how accuarate our calculations are.
+              If are measurements are only accurate to three digits, then our output should not be accurate to five digits, unless the entire number scale changes (like if we use logarithms).
+              However, if we are using exact numbers, like <m>`2`</m>, for example, they have no effect on the accuracy of the output, and therefore are exempt from the following rules.
+              There are two main rules to arithmetic with significant figures:
+            </p>
+            <div>
+              <h3>Rules of Significant Figure Arithmetic</h3>
+              <info>
+                implements: table;
+              </info>
+              <ol>
+                <li>
+                  If two numbers are added or subtracted, the output's significant figures should be that of the largest number. <br>
+                  For example:
+                  <div class="ex"><m>`1.000e2 + 1.23e0 \approx 1.01e2`</m></div>
+                  or
+                  <div class="ex"><m>`100.0 + 1.23 \approx 101.`</m></div>
+                  <br>
+                </li>
+                <li>
+                  If two numbers are multiplied or divided, the output's significant figures should be that of the least accurate number (least number of significant digits). <br>
+                  For example:
+                  <div class="ex"><m>`3.0e0 * 1.234e0 \approx 3.7e0`</m></div>
+                  or
+                  <div class="ex"><m>`3.0 * 1.234 \approx 3.7`</m></div>
+                </li>
+              </ol>
+            </div>
           </div>
           <div class="topic-header">
-            <h2>Factor Labeling</h2>
+            <h2>Factor Labelling</h2>
+            <p>
+              When doing calculations with units, it is important to make sure that your output is of the right unit.
+              Thankfully, units act similary to any other named constant, except that they don't have a numeric value.
+              Say, for example, we are trying to calculate the speed in <m>`km\over h`</m> of a runner with a top speed of <m>`6.20 {min\over mile}`</m>.
+              First we start with the conversions we'll need: (let's just say for this example, that we don't have a direct conversion from miles to kilometers) <br>
+            </p>
+            <ul>
+              <li><m>`1  mile = 5280 ft`</m></li>
+              <li><m>`1 m = 3.2808 ft`</m></li>
+              <li><m>`1 km = 1000 m`</m></li>
+              <li><m>`1 h = 60 min`</m></li>
+            </ul>
+            <p>From these conversions, we can now setup an equation which takes our <m>`6.20 {min\over mile}`</m> and converts it to <m>`km\over h`</m>:</p>
+            <div class="ex"><m>`{1  mile\over 6.20 min} * {60 min\over 1 h} * {5280 ft\over 1 mile} * {1 m\over 3.2808 ft} * {1 km\over 1000 m} = 15.6 {km\over h}`</m></div>
+            <p>
+              You can see that I inverted <m>`6.20`</m> because I needed the units of time and distance to be on the correct side of the division sign.
+              Then I used the given conversion equations and turned them into ratios, setup in such a way as to cancel out a previous unit and get closer to the units I want.
+              For example, in <m>`{1  mile\over 6.20 min} * {60 min\over 1 h}`</m>, the minutes cancel out, like any variable or named constant, and I end up with <m>`9.68 {mile\over h}`</m>.
+              The process continues like this, where in this example, I then convert to <m>`51100 {ft\over h}`</m>, <m>`15600 {m\over h}`</m>, and finally <m>`15.6 {km\over h}`</m>.
+            </p>
           </div>
           <div class="topic-header">
             <h2>Graph Literacy</h2>
+            <p>
+              You probably already know everything you need to know here, but it is here for you anyway.
+              This is basically the section which makes sure you know how to read a graph, what dependent and independent variables are, and how to make a graph.
+              Depending on the circumstances, a graph may need any of the following:
+            </p>
+            <div>
+              <h3>Parts of a Graph</h3>
+              <info>
+                implements: table;
+              </info>
+              <ul>
+                <li>Title (like "Effect of _____ over time")</li>
+                <li>Axes (lines w/ numbers)</li>
+                <li>Grid (optional, for better readability)</li>
+                <li>Axis Labels (like "Rate per hour")</li>
+                <li>Legend (usually only for a graph with multiple lines)</li>
+                <li>Data (your points and/or lines)</li>
+              </ul>
+              <graph>
+                title: "My Work on This Project Over Time";
+                iv-title: "Amount of Work (in %)";
+                dv-title: "Month (2016-2017)";
+                iv-labels: {
+                  "Jun",
+                  "Jul",
+                  "Aug",
+                  "Sep",
+                  "Oct",
+                  "Nov",
+                  "Dec",
+                  "Jan",
+                  "Feb",
+                  "Mar",
+                  "Apr",
+                  "May",
+                  "Jun"
+                };
+                data: {
+                  {
+                    25,
+                    15,
+                    0,
+                    30,
+                    20,
+                    0,
+                    10,
+                    15,
+                    0,
+                    20,
+                    100,
+                    100,
+                    0
+                  },
+                  {
+                    90,
+                    90,
+                    80,
+                    30,
+                    10,
+                    10,
+                    30,
+                    30,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                  }
+                };
+                data-color: {
+                  auto,
+                  "#c656b7"
+                };
+                legend: {
+                  "Observed effort",
+                  "Ideal effort"
+                };
+                graph-style: smooth;
+                width: 550;
+                precision: 3;
+                fitting: .8;
+                y-interval: 25;
+              </graph>
+              <br>
+              <i>Note: the data in this graph is made up, but it was approximated from real data.</i>
+            </div>
           </div>
         </div>
       </div>
@@ -315,18 +608,163 @@
         <div class="unit-container">
           <div class="topic-header">
             <h2>Speed, Velocity, and Acceleration</h2>
+            <p>
+              Before we get too far into the math of physics, let's start with how measurements work with time.
+              First and foremost, there are two basic measurements between two points: <b>displacement</b> and <b>distance</b>.
+              Displacement is a combination of the distance and direction of the space between two points, while distance is simply the space between.
+              In other words, distance is the absolute value of displacement.
+              For example, say you have two cars on the highway, an old Volkwagen Beatle <m>`3 m`</m> in front of a Maserati.
+              Right now, the distance between the two cars is understandably <m>`3 m`</m>, but the displacement of the Maserati from the Beatle is <m>`-3 m`</m>, because it is behind the Beatle which is our measurement point (or relative origin).
+              Then, let's say the Maserati driver in their mid-life crisis decides to show off on the highway and speeds forward <m>`15 m`</m>.
+              Now, the Maserati is displaced <m>`12 m`</m> from and is <m>`12 m`</m> away from the Beatle.
+            </p>
+            <p>
+              A similar thing happens with <b>speed</b> and <b>velocity</b>.
+              Speed is the instantaneous change in distance over time, and velocity is the instantaneous change in displacement over time.
+              In calculus, we call instantaneous change over time the <b>derivative</b>.
+              This will come in handy later.
+              Anyway, speed is the absolute value of velocity, just like distance is the absolute value of displacement.
+            </p>
+            <p>
+              And finally, we have <b>acceleration</b>.
+              There is no absolute value counterpart to acceleration <!--(just like there is no word to describe the inside of a 4-dimensional hypercube)-->, but it is the instantaneous change in velocity over time.
+              Basically, velocity is to dispacement as acceleration is to velocity; acceleration is the speed at which you speed up.
+              There is also jerk, the derivative of acceleration, and jounce, the derivative of jerk, but no one ever expects you to know these.
+            </p>
+            <div class="graph-placeholder dva"></div>
+            <p>
+              Something interesting about the randomly generated graph above is that acceleration will always be a cubic function, velocity a parabola, and acceleration a straight line.
+              This is all because I chose to use a cubic function for displacement, as polynomial functions have very predictable derivatives.
+            </p>
+            Quick calculus lesson:
+            <ul>
+              <li>
+                <m>`{d\over dx}`</m> is the symbol for derivative
+              </li>
+              <li>
+                when taking the derivative, terms separated by a <m>`+`</m> or <m>`-`</m> can be treated separately <m>`{d\over dx} (f(x) + g(x)) = {d\over dx} (f(x)) + {d\over dx} (g(x))`</m>
+              </li>
+              <li>
+                Power Rule: <m>`{d\over dx} (a*x^n) = a*n*x^{n-1}`</m>, for example: <m>`{d\over dx} (5x^3) = 5*3x^2 = 15x^2`</m>
+              </li>
+            </ul>
+            <p>
+              Combining this all together means that <m>`{d\over dx} (4x^3 - 2x^2 + 10x^1 - 4x^0)`</m> is equal to <m>`4*3x^2 - 2*2x^1 + 10*1x^0 - 4*0x^{-1}`</m>, and simplified out: <m>`12x^2 - 4x + 10`</m>.
+              This means that if displacement is described by a cubic function, velocity must then be described by a quadratic function, or that if velocity is a linear function over time, displacement must be quadratic.
+              (It's also much easier to program)
+            </p>
           </div>
           <div class="topic-header">
             <h2>Position - Time Graphs</h2>
+            <p>
+              Just understand here that if the displacement or distance graph represents a straight line, then velocity is constant and acceleration is <m>`0`</m>.
+              However, if the graph is curved in any way, then velocity must be changing over time and acceleration cannot be <m>`0`</m>.
+              Also, if the distance graph is constant, velocity and acceleration must both be <m>`0`</m>, because whatever is graphed isn't moving.
+            </p>
           </div>
           <div class="topic-header">
             <h2>Velocity - Time Graphs</h2>
+            <p>
+              The same goes here as did with the position time graphs, just that if velocity is a straight line, displacement is a parabola, and acceleration constant.
+              Again, it's all relative.
+              Acceleration is to velocity as velocity is to displacement, hence why a straight line for displacement or velocity is a constantly flat line for velocity or acceleration, respectively.
+              Then if velocity is curved in any way, so must be displacement, and acceleration must be changing over time.
+              And finally, if the velocity graph is constant, then displacement must be linear and acceleration must be <m>`0`</m>.
+            </p>
           </div>
           <div class="topic-header">
             <h2>Acceleration - Time Graphs</h2>
+            <p>
+              And as expected, the same basically holds true for acceleration.
+              If acceleration is a straight line, velocity is a parabola, and displacement a cubic function.
+              But if acceleration is at all curved, so must be both velocity and displacement.
+              And if acceleration is constant, then velocity msut be linear and acceleration must be a parabola.
+            </p>
           </div>
           <div class="topic-header">
             <h2>Kinematic Equations</h2>
+            <p>
+              If you haven't noticed yet, there is a specific progression of types of graphs when comparing displacement, velocity, and acceleration: (starting from the greatest-order derivative and decreasing in order)
+              <m>`0`</m> -> linear -> quadratic -> cubic -> quartic... (and so on).
+              In other words, as you take the derivative or say go from displacement to velocity, you get rid of a power from the equation, or when going the opposite direction, you add a power (and an unknown constant) to the equation.
+              <b>Also note:</b> in calculus, an <b>integral</b> is the opposite of a derivative, so for example, velocity is the integral of acceleration, and that the integral of a constant is that constant multiplied by <m>`x`</m> (or time, or whatever).
+            </p>
+            <p>
+              There are a set of equations called <b>kinematic equations</b> which can calculate between displacement, velocity, and acceleration. They basically simplify out the calculus potentially involved in calculating physical motion, but the definitions of these equations themselves may involve calculus anyway.
+            </p>
+            <p>
+              There are four main kinematic equations, and with them I provide -based explanations. In them, <m>`d_i` stands for initial displacement (almost always `0`), `d_f` stands for the final displacement, `v_i` stands for initial velocity, `v_f` stands for final velocity, `t` stands for the (variable) time passed between `i` and `f`, and `a` stands for acceleraion, also assuming acceleration is going to be constant</m>.
+              You will also need to know that the symbols <m>`\int_a^b(...)dx`</m> mean to take the definite integral of <m>`(...)`</m> as the variable <m>`x` changes from `a` to `b`</m>, and that after taking a definite integral, the graph is shifted vertically by the initial value of the integral of <m>`...`</m>.
+            </p>
+            <p>
+              Quick (not really) example: say we have an equation, <m>`y=x^2+3x-1`</m>.
+              Then <m>`{d\over dx}(y)={d\over dx}(x^2 + 3x - 1) \Rightarrow {dy\over dx} = 2x + 3`</m>.
+              You will notice that the <m>`-1`</m> term has been lost in the derivative, so how can an integral restore it?
+              This is the same kind of dilemma as squaring a number, because both negative and positive numbers square to a positive number, but when taking the square root of a number, you don't know if the result is positive or negative.
+              In this example, say we want to get back to the original equation from the derivative, we would do this: <m>`\int({d\over dx}(y))dx=\int(2x + 3)dx \Rightarrow \int dy=\int(2x + 3)dx \Rightarrow y=x^2 + 3x + C`</m>.
+              Of course in this case, <m>`C`</m> is <m>`-1`</m>, but it represents the initial value, hence why you will see <m>`v_i`</m> everywhere, because it is the inital velocity value and replaces <m>`C`</m> from the integral of acceleration.
+            </p>
+            <p>
+              Finally, here are mathematical representations of the relationships between displacement, velocity, and acceleration: <m>`v = {d\over dt} (d)`, `d = \int (v)dt`, `a = {d\over dt} (a)`, `v = \int (a)dt`</m>.
+              This is just a mathematical version of the derivative stuff I was explaining earlier, but it helps the proofs below make more sense.
+            </p>
+            <div>
+              <h3>Main Kinematic Equations</h3>
+              <info>
+                implements: table;
+              </info>
+              <ul>
+                <li>
+                  <p>
+                    <m>`v_f = v_i + a*t`</m> <br> <br>
+                    The way we get to this equation is by taking integrals from the first variable that is constant (in this case, acceleration). In this specific case, we can just use the fact that velocity is the integral of acceleration, but this time applying a set amount of time to it. <br>
+                    <m>`v_f = \int_i^f (a)dt`</m> <br>
+                    Now we can easily simplify this out: <br>
+                    <m>`v_f = v_i + a*t`</m> <br>
+                    And we're done!
+                  </p>
+                </li>
+                <li>
+                  <p>
+                    <m>`d_f = d_i + v_i*t + {1\over 2}a*t^2`</m> <br> <br>
+                    This equation is very similar to the one above, as in we take integrals until we get to a constant. But this time know that the integral of velocity is displacement, so let's start with that. <br>
+                    <m>`d_f = d_i + \int_i^f (v)dt \Rightarrow d_f = d_i + \int_i^f (v_i + \int_i^f (a)dt)dt`</m> <br>
+                    Whoah... that looks complicated. Let's simplify it down. At this point, everything is a constant, so it's pretty easy to start. <br>
+                    <m>`d_f = d_i + \int_i^f (v_i + a*t)dt`</m> <br>
+                    Easy enough, but now we have a variable <m>`t`</m> in our integral. Not to worry, because integrals are the opposite of derivatives, and you already know the Power Rule for derivatives, just invert it and apply it here! <br>
+                    <m>`d_f = d_i + v_i*t + {1\over 2}a*t^2`</m> <br>
+                    Done! That wasn't too hard, was it?
+                  </p>
+                </li>
+                <li>
+                  <p>
+                    <m>`d_f = d_i + {v_f + v_i\over 2}*t`</m> <br> <br>
+                    This equation is just a combination of the two equations above. Thankfully this one doesn't really involve calculus, so here's where we start: <br>
+                    <m>`v_i*t + {1\over 2}a*t^2 = t*(v_i + {1\over 2}a*t) = t*{1\over 2}*(2v_i + a*t)`</m> <br>
+                    Now this looks quite similar to the first kinematic equation, doesn't it? Let's try substituting. <br>
+                    <m>`t*{1\over 2}*(2v_i + a*t) = t*{1\over 2}*(v_i + a*t + v_i) = t*{1\over 2}(v_f + v_i)`</m> <br>
+                    Almost done, now we just need to substitute our new expression into the original equation: <br>
+                    <m>`d_f = d_i + t*{1\over 2}*(v_f + v_i)`</m> <br>
+                    And hey look! We've made it once more. (if you want a small challenge, try forming this equation from the graph geometrically, calculating the area under the velocity line)
+                  </p>
+                </li>
+                <li>
+                  <p>
+                    <m>`v_f^2 = v_i^2 + 2a*(v_f - v_i)`</m> <br> <br>
+                    This one is another algebra-only equation thankfully. <br>
+                    <m>`v_f = v_i + a*t \Rightarrow v_f^2 = v_i^2 + 2v_i*a*t + a^2 t^2`</m> <br>
+                    From here we then just try to find a way to substitute with the second kinematic equation. <br>
+                    <m>`v_f^2 = v_i^2 + 2v_i*a*t + a^2 t^2 = v_i^2 + 2a*(v_i*t + {1\over 2}a*t^2) = v_i^2 + 2a*(v_i*t + {1\over 2}a*t^2 + d_i - d_i)`</m> <br>
+                    Now we can substitute. <br>
+                    <m>`v_f^2 = v_i^2 + 2a*(v_i*t + {1\over 2}a*t^2 + d_i - d_i) = v_i^2 + 2a*(d_f - d_i)`</m>
+                    Done again!
+                  </p>
+                </li>
+              </ul>
+            </div>
+            <p>
+              There is a bit more that you should know too. These kinematic equations assist you for basically integral operations, but you may be asked to do a derivative version as well. For example, "From a graph of the displacement of ____ the average velocity of ____ from <m>`a`</m> seconds to <m>`b`</m> seconds." This is <i>way</i> easier to do than anything else in this topic. In this case, all you have to do is calculate the slope of the line from point <m>`a`</m> to point <m>`b`</m> (the <m>"`m`" in `y=mx+b`</m>). This is in essence approximating the derivative, and you can use the derivative-integral relationships between displacement and the like to figure out exactly what equations to use.
+            </p>
           </div>
         </div>
       </div>
@@ -338,12 +776,46 @@
         <div class="unit-container">
           <div class="topic-header">
             <h2>Vectors in One Dimension</h2>
+            <p>
+              First and foremost, a vector is a mathematical structure which specifies direction and magnitude, or basically in which direction and for how much.
+              They are usually represented by arrows, where the tail is the origin, and the head is the relative the direction and magnitude from the tail.
+              Also, vectors are generally notated just like any coordinate, because it is basically a relative coordinate.
+            </p>
+            <p>
+              In one dimension, vectors are really simple; displacement, velocity, and acceleration are all one-dimensional vectors, because they specify direction (positive or negative), and magnitude (the number).
+              Similarly, any arithmetic with one-dimensional vectors is exactly the same as arithmetic with any normal number.
+            </p>
           </div>
           <div class="topic-header">
             <h2>Vectors in Two Dimensions</h2>
+            <p>
+              In two dimensions, vectors get a bit wierder.
+              There are actually two ways to show a vector in two dimesions: one with the angle to an cardinal direction or axis (like 60 degrees from East) and the length of the vector, and the other as simply the x and y offsets from the tail to the head of the vector.
+              As I prefer the second version of notation for vectors, I will continue using that notation.
+              I should note however, that the angle of a vector can be calculated using simple inverse trigonometry (soh cah toa) - just make sure that if the direction of the vector is inverted to add <m>`180`</m> degrees to the result.
+            </p>
+            <p>
+              When doing simple addition and subtraction with any-dimensional vectors, the resulting vector's axial values are the sums or differences between the respective axial values of the input vectors.
+              For example, <m>`(15, 9) + (-5, 4) = (10, 13)`</m>.
+              Also, the <b>resultant</b> is just the result from summing multiple vectors.
+            </p>
+            <p>
+              However, there are multiple kinds of multiplication of vectors.
+              The easiest is called scalar multiplication, in which a vector is multiplied by a scalar.
+              A <b>scalar</b> is any single number, which represents the scale of something.
+              When you multiply a vector and scalar, the scalar basically distributes into the vector's axial values, so <m>`(15, 9) * 4 = (60, 36)`</m>.
+              The other kinds of vector multiplication are called dot products and cross products, but for high school physics these are not necessary to know.
+            </p>
           </div>
           <div class="topic-header">
             <h2>Projectile Motion</h2>
+            <p>
+              When a projectile is launched, assuming air resistance is negligable, the projectile will start in the air with a specific velocity vector, and will always have an acceleration vector defined by gravity.
+              Because vectors can be summed as if their respective parts are summed, we can actually split our kinematic equations into two (or more) one-dimensional equations.
+              For examlple, let's say we have a projectile which is launched with an initial velocity vector of <m>`(10, 2)`, and a constant acceleration of `(0, -9.8)` due to gravity, the height of the projectile over time would be given by the equation `d_f = 2 * t + -4.9 * t^2`.</m>
+              With this we could also determine when the projectile hits the ground (<m>when `d_f = 0`</m>) what it's x value is.
+              Really none of this is very hard.
+            </p>
           </div>
         </div>
       </div>
